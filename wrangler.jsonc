@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers static site. Built and deployed by Cloudflare Workers Builds on every push to main.
+  "name": "thalimeter",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
