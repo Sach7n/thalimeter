@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import RiceCalculator from '../../components/RiceCalculator';
+import Faq from '../../components/Faq.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { rice, RICE, RICE_DEFAULT, RICE_MEAL, cupsText, gramsText, lbText, litresText, quartsText, type RiceType, type RiceMeal } from '../../lib/kitchen';
+import { RICE_COUNTS, RICE_TYPE_PAGES } from '../../lib/presets';
+import { faqLd, appLd, crumbLd } from '../../lib/seo';
+
+export function getStaticPaths() {
+  return [
+    ...RICE_COUNTS.map((n) => ({ params: { slug: `for-${n}-people` }, props: { kind: 'count' as const, n } })),
+    ...RICE_TYPE_PAGES.map((p) => ({ params: { slug: p.slug }, props: { kind: 'type' as const, type: p.type, name: p.name } })),
+  ];
+}
+const p = Astro.props as { kind: 'count'; n: number } | { kind: 'type'; type: RiceType; name: string };
+const meals = Object.keys(RICE_MEAL) as RiceMeal[];
+let title: string, h1: string, description: string, answer: string, preset: object, faq: { q: string; a: string }[], table: { label: string; cups: string; weight: string; water: string; cooked: string }[];
+
+if (p.kind === 'count') {
+  const n = p.n;
+  const s = rice({ ...RICE_DEFAULT, adults: n, meal: 'side' }), m = rice({ ...RICE_DEFAULT, adults: n, meal: 'main' });
+  title = `How Much Rice for ${n} People`; h1 = `How much rice for ${n} people`;
+  answer = `For ${n} people, cook <b>${cupsText(s.dryCups)} (${gramsText(s.dryG)}) of uncooked rice</b> as a side dish, or <b>${cupsText(m.dryCups)} (${gramsText(m.dryG)})</b> when rice is the main part of the meal.`;
+  description = `Rice for ${n} people: ${cupsText(s.dryCups)} (${gramsText(s.dryG)}) uncooked as a side, ${cupsText(m.dryCups)} (${gramsText(m.dryG)}) as a main. Water, pot size and a calculator for your exact party.`;
+  preset = { adults: n, meal: 'side' };
+  table = meals.map((k) => { const r = rice({ ...RICE_DEFAULT, adults: n, meal: k }); return { label: RICE_MEAL[k].label, cups: cupsText(r.dryCups), weight: `${gramsText(r.dryG)} · ${lbText(r.dryG)}`, water: `${cupsText(r.waterCups)} · ${litresText(r.waterMl)}`, cooked: `${cupsText(r.cookedCups)} · ${gramsText(r.cookedG)}` }; });
+  faq = [
+    { q: `How many cups of rice for ${n} people?`, a: `${cupsText(s.dryCups)} uncooked as a side, ${cupsText(m.dryCups)} as a main. That makes about ${cupsText(s.cookedCups)} and ${cupsText(m.cookedCups)} of cooked rice.` },
+    { q: `How many pounds of rice for ${n} people?`, a: `${lbText(s.dryG)} of uncooked rice as a side and ${lbText(m.dryG)} as a main.` },
+    { q: `Can I cook rice for ${n} people in one pot?`, a: m.potL > 12 ? `This is a lot of rice. Use a ${m.potL} L stock pot, or cook it in ${m.cookerBatches.large} batches in a large (10-cup) rice cooker. Large batches cook more evenly in the oven: bake covered at 180 °C (350 °F) for about 35 minutes.` : `Yes. Use a pot of at least ${m.potL} L (${quartsText(m.potL * 1000)}) so the rice has space to grow.` },
+  ];
+} else {
+  const t = RICE[p.type];
+  const s = rice({ ...RICE_DEFAULT, type: p.type, adults: 1, meal: 'side' }), m = rice({ ...RICE_DEFAULT, type: p.type, adults: 1, meal: 'main' });
+  const nm = p.name; const Nm = nm[0].toUpperCase() + nm.slice(1);
+  title = `How Much ${Nm.replace(/\b\w/g, (c) => c.toUpperCase())} Per Person`; h1 = `How much ${nm} per person`;
+  answer = `Plan <b>${gramsText(s.dryG)} (${cupsText(s.dryCups)}) of uncooked ${nm} per person</b> as a side, and <b>${gramsText(m.dryG)} (${cupsText(m.dryCups)})</b> as a main. On the stove, use ${t.water.stovetop} cups of water for each cup of rice.`;
+  description = `${Nm} per person: ${gramsText(s.dryG)} uncooked as a side, ${gramsText(m.dryG)} as a main. Water ratio, cooked yield and a calculator for any number of guests.`;
+  preset = { type: p.type };
+  table = [2, 4, 6, 10, 20, 50].map((n) => { const r = rice({ ...RICE_DEFAULT, type: p.type, adults: n, meal: 'main' }); return { label: `${n} people`, cups: cupsText(r.dryCups), weight: `${gramsText(r.dryG)} · ${lbText(r.dryG)}`, water: `${cupsText(r.waterCups)} · ${litresText(r.waterMl)}`, cooked: cupsText(r.cookedCups) }; });
+  faq = [
+    { q: `How much water for 1 cup of ${nm}?`, a: `${t.water.stovetop} cups on the stove, ${t.water.cooker} cups in a rice cooker and ${t.water.instantpot} cup in an Instant Pot.` },
+    { q: `How much cooked ${nm} does 1 cup make?`, a: `About ${cupsText(t.yieldVol)} of cooked rice.` },
+    { q: `Any tips for ${nm}?`, a: t.tip },
+  ];
+}
+const tableHead = p.kind === 'count' ? 'How rice is served' : 'Main dish for';
+---
+<Base title={title} description={description} jsonld={[appLd('Rice calculator', Astro.url.pathname, description), faqLd(faq), crumbLd([['Home', '/'], ['Rice calculator', '/rice-calculator/'], [h1, Astro.url.pathname]])]}>
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/rice-calculator/">Rice calculator</a></nav>
+  <section class="hero">
+    <h1>{h1}</h1>
+    <p class="answer" set:html={answer} />
+  </section>
+  <section>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>{tableHead}</th><th class="n">Uncooked (cups)</th><th class="n">Uncooked (weight)</th><th class="n">Water (stove)</th><th class="n">Cooked</th></tr></thead>
+      <tbody>{table.map((r) => <tr><td>{r.label}</td><td class="n">{r.cups}</td><td class="n">{r.weight}</td><td class="n">{r.water}</td><td class="n">{r.cooked}</td></tr>)}</tbody>
+    </table></div>
+    <p class="muted small" style="margin-top:8px">{p.kind === 'count' ? 'Long-grain white rice, adults, normal appetite.' : 'Adults, normal appetite.'} Change anything below.</p>
+  </section>
+  <section class="section">
+    <h2>Change the numbers</h2>
+    <p class="muted" style="margin:8px 0 16px">Add children, change the rice, or plan for a buffet.</p>
+    <RiceCalculator client:visible preset={preset} />
+  </section>
+  <AdSlot slot="" />
+  <Faq items={faq} />
+  <section class="section">
+    <h2>More rice amounts</h2>
+    <ul class="links" style="margin-top:12px">{RICE_COUNTS.map((n) => <li><a href={`/rice/for-${n}-people/`}>{n} people</a></li>)}</ul>
+  </section>
+</Base>

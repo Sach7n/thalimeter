@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import CookedConverter from '../components/CookedConverter';
+import Faq from '../components/Faq.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { RICE, convertRice, cupsText, gramsText, type RiceType } from '../lib/kitchen';
+import { faqLd, appLd } from '../lib/seo';
+const faq = [
+  { q: 'How much cooked rice does 1 cup of uncooked rice make?', a: '1 cup of uncooked long-grain white rice makes about <b>3 cups of cooked rice</b>. Jasmine makes about 2¾ cups and sushi rice about 2½ cups.' },
+  { q: 'How much does 100 g of uncooked rice weigh when cooked?', a: 'About 280 g for white or basmati rice, and about 250 g for brown rice.' },
+  { q: 'How much uncooked rice makes 1 cup of cooked rice?', a: 'About ⅓ cup (60 g) of uncooked white rice.' },
+  { q: 'Should I count calories on cooked or uncooked rice?', a: 'Weigh uncooked rice if you can. Cooked rice changes weight with the amount of water, but uncooked rice always has the same calories per gram.' },
+];
+const types = Object.keys(RICE) as RiceType[];
+---
+<Base title="Uncooked to Cooked Rice Converter (Cups and Grams)" description="Convert uncooked rice to cooked rice, or cooked to uncooked, in cups or grams. For white, basmati, jasmine, brown and sushi rice." jsonld={[appLd('Uncooked to cooked rice converter', '/uncooked-to-cooked-rice/', 'Convert dry rice to cooked rice and back.'), faqLd(faq)]}>
+  <section class="hero">
+    <h1>Uncooked to cooked rice converter</h1>
+    <p>Find how much cooked rice you get, or how much uncooked rice you need for a recipe.</p>
+  </section>
+  <CookedConverter client:load />
+  <AdSlot slot="" />
+  <section class="section">
+    <h2>Conversion chart</h2>
+    <div class="table-wrap" style="margin-top:12px"><table class="table">
+      <thead><tr><th>Rice</th><th class="n">1 cup uncooked makes</th><th class="n">100 g uncooked makes</th><th class="n">For 1 cup cooked, use</th></tr></thead>
+      <tbody>{types.map((t) => { const a = convertRice(1, 'cups', 'toCooked', t); const b = convertRice(100, 'grams', 'toCooked', t); const c = convertRice(1, 'cups', 'toDry', t); return (
+        <tr><td>{RICE[t].label}</td><td class="n">{cupsText(a.cookedCups)}</td><td class="n">{gramsText(b.cookedG)}</td><td class="n">{cupsText(c.dryCups)} · {gramsText(c.dryG)}</td></tr>); })}</tbody>
+    </table></div>
+  </section>
+  <Faq items={faq} />
+</Base>

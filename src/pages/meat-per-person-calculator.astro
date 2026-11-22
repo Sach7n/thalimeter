@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import MeatCalculator from '../components/MeatCalculator';
+import Faq from '../components/Faq.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { MEAT, meat, MEAT_DEFAULT, gramsText, lbText, type MeatType } from '../lib/kitchen';
+import { MEAT_PAGES } from '../lib/meat-pages';
+import { faqLd, appLd } from '../lib/seo';
+const types = Object.keys(MEAT) as MeatType[];
+const faq = [
+  { q: 'How much meat per person?', a: 'Plan <b>½ lb (225 g) of raw boneless meat per adult</b> when it is the only main. For bone-in meat, plan ¾ lb (340 g). With two mains, use about 60% of these amounts.' },
+  { q: 'How much meat per person for a BBQ?', a: 'About ½ lb (225 g) of raw meat per adult in total, across all the meats. For burgers, plan 1½ patties per adult.' },
+  { q: 'How much turkey per person?', a: 'About 1¼ lb (565 g) of whole raw turkey per person. This includes the bones and gives a few leftovers.' },
+  { q: 'How much pulled pork per person?', a: 'About ¾ lb (360 g) of raw pork shoulder per person. Pork shoulder loses about half of its weight when you smoke or braise it.' },
+  { q: 'Raw or cooked weight?', a: 'All amounts on this page are raw weight, which is the weight you buy. Most meat loses about 25% when cooked.' },
+];
+---
+<Base title="Meat Per Person Calculator for Parties and BBQs" description="How much meat to buy per person. Calculate raw weight for BBQs, tacos, burgers, turkey, brisket, pulled pork and ham, for any number of guests." jsonld={[appLd('Meat per person calculator', '/meat-per-person-calculator/', 'How much meat to buy for any number of people.'), faqLd(faq)]}>
+  <section class="hero">
+    <h1>Meat per person calculator</h1>
+    <p>How much meat to buy for a BBQ, a taco night, a holiday roast or a party.</p>
+  </section>
+  <MeatCalculator client:load />
+  <AdSlot slot="" />
+  <section class="section prose">
+    <h2>Meat per person: the quick answer</h2>
+    <p class="answer"><b>½ lb (225 g) of boneless meat per adult</b>, or <b>¾ lb (340 g) bone-in</b>, when it is the only main dish.</p>
+  </section>
+  <section class="section">
+    <h2>Chart for 10 adults</h2>
+    <p class="muted" style="margin:8px 0 16px">Raw weight to buy, the only main, normal appetite.</p>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Meat</th><th class="n">Per adult</th><th class="n">For 10 adults</th></tr></thead>
+      <tbody>{types.map((t) => { const r = meat({ ...MEAT_DEFAULT, type: t }); return (
+        <tr><td>{MEAT[t].label}</td><td class="n">{gramsText(MEAT[t].rawG)} · {lbText(MEAT[t].rawG)}</td><td class="n">{gramsText(r.rawG)} · {lbText(r.rawG)}</td></tr>); })}</tbody>
+    </table></div>
+  </section>
+  <section class="section">
+    <h2>By occasion</h2>
+    <ul class="links" style="margin-top:12px">{MEAT_PAGES.map((p) => <li><a href={`/meat/${p.slug}/`}>{p.h1}</a></li>)}</ul>
+  </section>
+  <Faq items={faq} />
+</Base>

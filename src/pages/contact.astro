@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config';
+---
+<Base title="Contact" description="Contact ThaliMeter with questions, corrections or ideas for a new calculator.">
+  <section class="hero"><h1>Contact</h1></section>
+  <div class="prose">
+    <p>Found a number that looks wrong? Want a calculator we do not have yet? Send us an email:</p>
+    <p><a class="btn" href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></p>
+    <p class="muted">We read every message. We usually reply within a few days.</p>
+  </div>
+</Base>

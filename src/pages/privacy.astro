@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config';
+const updated = '22 November 2026';
+---
+<Base title="Privacy Policy" description="How ThaliMeter handles your data, cookies and advertising.">
+  <section class="hero"><h1>Privacy policy</h1><p class="muted">Last updated {updated}</p></section>
+  <div class="prose">
+    <p>{site.name} ({site.url}) is operated by {site.operator}. This policy tells you what data we collect and how we use it.</p>
+    <h2>What you type</h2>
+    <p>The calculators run in your browser. We do not send or save the numbers you enter. Your choice of US or metric units is kept in your browser's local storage so that the site remembers it.</p>
+    <h2>Server logs</h2>
+    <p>Our hosting provider and our network provider (Cloudflare) keep standard server logs, such as IP address, browser type and the pages you open, for security and to keep the site working.</p>
+    <h2>Advertising and cookies</h2>
+    <p>We may show ads from Google AdSense. Third-party vendors, including Google, use cookies to show ads based on your earlier visits to this site and other sites. Google's use of advertising cookies lets Google and its partners show ads to you based on your visits to this site and other sites on the internet.</p>
+    <p>You can turn off personalised advertising in <a href="https://adssettings.google.com" rel="nofollow">Google Ads Settings</a>, or turn off third-party vendor cookies at <a href="https://www.aboutads.info/choices/" rel="nofollow">aboutads.info</a>. For more, see <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow">how Google uses data from partner sites</a>.</p>
+    <p>If you are in the EEA, the UK or Switzerland, we ask for your consent before we use cookies for personalised ads.</p>
+    <h2>Children</h2>
+    <p>This site is not directed at children under 13, and we do not knowingly collect their data.</p>
+    <h2>Contact</h2>
+    <p>Questions about this policy: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+  </div>
+</Base>

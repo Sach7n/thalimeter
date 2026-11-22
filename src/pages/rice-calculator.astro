@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import RiceCalculator from '../components/RiceCalculator';
+import Faq from '../components/Faq.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { rice, RICE_DEFAULT, cupsText, gramsText, lbText } from '../lib/kitchen';
+import { RICE_COUNTS, RICE_TYPE_PAGES } from '../lib/presets';
+import { faqLd, appLd } from '../lib/seo';
+const rows = RICE_COUNTS.map((n) => ({ n, side: rice({ ...RICE_DEFAULT, adults: n, meal: 'side' }), main: rice({ ...RICE_DEFAULT, adults: n, meal: 'main' }) }));
+const faq = [
+  { q: 'How much rice per person?', a: 'Plan <b>¼ cup (50 g) of uncooked rice per person</b> when rice is a side dish, and <b>½ cup (85–100 g)</b> when rice is the main part of the meal, such as a curry and rice or a rice bowl. 1 cup of uncooked white rice makes about 3 cups cooked.' },
+  { q: 'How many cups of rice per person?', a: 'About ¼ cup uncooked (¾ cup cooked) for a side, and about ½ cup uncooked (1½ cups cooked) for a main. For hungry eaters, add 25%.' },
+  { q: 'How much uncooked rice for 1 person?', a: 'For one adult, 50 g (¼ cup) as a side or 85 g (a little less than ½ cup) as a main. For rice dishes like biryani or fried rice, use 100 g.' },
+  { q: 'Do I count children the same as adults?', a: 'No. Children under 12 usually eat about half an adult portion. The calculator counts each child as half an adult.' },
+  { q: 'What is a rice-cooker cup?', a: 'The small cup that comes with most rice cookers holds 180 ml, not 240 ml. It holds about 150 g of rice. The calculator shows your amount in rice-cooker cups too.' },
+];
+---
+<Base title="Rice Calculator: How Much Rice Per Person" description="Free rice calculator. Enter the number of guests and get uncooked rice in cups and grams, water, cooked yield and pot size. Works for white, basmati, jasmine, brown and sushi rice." jsonld={[appLd('Rice calculator', '/rice-calculator/', 'How much rice per person for any number of people.'), faqLd(faq)]}>
+  <section class="hero">
+    <h1>Rice calculator</h1>
+    <p>How much rice to cook for your guests, with the water, the pot size and the cook time.</p>
+  </section>
+  <RiceCalculator client:load />
+  <AdSlot slot="" />
+  <section class="section prose">
+    <h2>Rice per person: the quick answer</h2>
+    <p class="answer">Cook <b>¼ cup (50 g) uncooked rice per person</b> for a side dish and <b>½ cup (85 g) per person</b> when rice is the main part of the meal.</p>
+    <p>Most guides give one number. That number is wrong half the time, because the amount depends on how you serve the rice. Next to three other dishes at a party, people take a small spoonful. With a curry or a stir-fry, rice is most of the plate.</p>
+  </section>
+  <section class="section">
+    <h2>Rice for a crowd: chart</h2>
+    <p class="muted" style="margin:8px 0 16px">Long-grain white rice, uncooked, normal appetite, adults.</p>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>People</th><th class="n">Side dish (cups)</th><th class="n">Side dish (weight)</th><th class="n">Main (cups)</th><th class="n">Main (weight)</th></tr></thead>
+      <tbody>{rows.map(({ n, side, main }) => (
+        <tr><td><a href={`/rice/for-${n}-people/`}>{n} people</a></td><td class="n">{cupsText(side.dryCups)}</td><td class="n">{gramsText(side.dryG)} · {lbText(side.dryG)}</td><td class="n">{cupsText(main.dryCups)}</td><td class="n">{gramsText(main.dryG)} · {lbText(main.dryG)}</td></tr>
+      ))}</tbody>
+    </table></div>
+  </section>
+  <section class="section">
+    <h2>By type of rice</h2>
+    <ul class="links" style="margin-top:12px">{RICE_TYPE_PAGES.map((p) => <li><a href={`/rice/${p.slug}/`}>{p.name[0].toUpperCase() + p.name.slice(1)} per person</a></li>)}
+      <li><a href="/rice-to-water-ratio/">Rice to water ratio</a></li><li><a href="/uncooked-to-cooked-rice/">Uncooked to cooked rice</a></li></ul>
+  </section>
+  <Faq items={faq} />
+</Base>

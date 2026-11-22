@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import PastaCalculator from '../components/PastaCalculator';
+import Faq from '../components/Faq.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { pasta, PASTA_DEFAULT, gramsText, lbText, round } from '../lib/kitchen';
+import { PASTA_COUNTS } from '../lib/presets';
+import { faqLd, appLd } from '../lib/seo';
+const rows = PASTA_COUNTS.map((n) => ({ n, side: pasta({ ...PASTA_DEFAULT, adults: n, meal: 'side' }), main: pasta({ ...PASTA_DEFAULT, adults: n, meal: 'main' }) }));
+const faq = [
+  { q: 'How much pasta per person?', a: 'Plan <b>100 g (3½ oz) of dry pasta per person</b> for a main course and <b>55 g (2 oz)</b> for a side or a starter. Fresh pasta is heavier, so use about 130 g per person.' },
+  { q: 'How many people does a 1 lb box of pasta feed?', a: 'A 1 lb (454 g) box feeds 4–5 people as a main and about 8 as a side.' },
+  { q: 'How much spaghetti per person?', a: 'About 100 g (3½ oz). Without a scale, a bundle of dry spaghetti the size of a US quarter (about 2.5 cm across) is about 56 g, one side portion.' },
+  { q: 'How much water to cook pasta?', a: 'Use about 1 litre of water for each 100 g of pasta, and at least 3 litres. Add about 7 g of salt (1 heaped teaspoon) per litre.' },
+  { q: 'How much sauce per person?', a: 'About 150 g (½ cup) of tomato sauce per 100 g of dry pasta. A 24 oz jar sauces about 1 lb of pasta.' },
+];
+---
+<Base title="Pasta Calculator: How Much Pasta Per Person" description="Free pasta calculator. Enter the number of guests and get dry pasta in grams, pounds and boxes, plus water, salt and sauce. For spaghetti, penne, fresh and filled pasta." jsonld={[appLd('Pasta calculator', '/pasta-calculator/', 'How much pasta per person for any number of people.'), faqLd(faq)]}>
+  <section class="hero">
+    <h1>Pasta calculator</h1>
+    <p>How much pasta to cook, how many boxes to buy, and how much water, salt and sauce you need.</p>
+  </section>
+  <PastaCalculator client:load />
+  <AdSlot slot="" />
+  <section class="section prose">
+    <h2>Pasta per person: the quick answer</h2>
+    <p class="answer"><b>100 g (3½ oz) of dry pasta per person</b> for a main, <b>55 g (2 oz)</b> for a side. A 1 lb box feeds about 4 as a main.</p>
+    <p>Italian cooks plan 80–100 g for a first course. In the US and the UK, pasta is often the whole meal, so 100 g is a safer amount. For big eaters or teenagers, use 125 g.</p>
+  </section>
+  <section class="section">
+    <h2>Pasta for a crowd: chart</h2>
+    <p class="muted" style="margin:8px 0 16px">Dry pasta, normal appetite, adults.</p>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>People</th><th class="n">As a side</th><th class="n">As a main</th><th class="n">1 lb boxes (main)</th><th class="n">500 g packs (main)</th></tr></thead>
+      <tbody>{rows.map(({ n, side, main }) => (
+        <tr><td><a href={`/pasta/for-${n}-people/`}>{n} people</a></td><td class="n">{gramsText(side.g)} · {lbText(side.g)}</td><td class="n">{gramsText(main.g)} · {lbText(main.g)}</td><td class="n">{round(main.boxes16oz, 0.25)}</td><td class="n">{round(main.packs500g, 0.25)}</td></tr>
+      ))}</tbody>
+    </table></div>
+  </section>
+  <Faq items={faq} />
+</Base>
