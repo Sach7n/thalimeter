@@ -1,0 +1,13 @@
+---
+import Guide from '../../components/Guide.astro';
+import { PASTA, PASTA_MEAL, G_PER_OZ, cupsText, round } from '../../lib/kitchen';
+const oz = [2, 3, 4, 6, 8, 12, 16, 24, 32];
+const cup = PASTA.dryShort.gPerCup!;
+---
+<Guide slug="/pasta/ounces-grams-cups/" tool={{ href: '/pasta-calculator/', name: 'pasta calculator' }}>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Dry pasta</th><th class="n">Grams</th><th class="n">Short pasta, cups</th><th class="n">Mains</th><th class="n">Sides</th><th class="n">Cooked</th></tr></thead>
+    <tbody>{oz.map((o) => { const g = o * G_PER_OZ; return <tr><td>{o} oz{o % 16 === 0 ? ` (${o / 16} lb)` : ''}</td><td class="n">{round(g)} g</td><td class="n">{cupsText(g / cup)}</td><td class="n">{round(g / PASTA_MEAL.main.g, 0.5)}</td><td class="n">{Math.floor(g / PASTA_MEAL.side.g)}</td><td class="n">{round(g * PASTA.dryLong.yieldWt, 5)} g</td></tr>; })}</tbody>
+  </table></div>
+  <p class="table-note">Cups are for short shapes like penne or macaroni and vary by shape. Long pasta like spaghetti does not fit in a cup: weigh it, or use a bundle the width of a US quarter for 2 oz.</p>
+</Guide>

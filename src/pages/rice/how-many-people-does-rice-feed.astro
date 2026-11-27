@@ -1,0 +1,17 @@
+---
+import Guide from '../../components/Guide.astro';
+import { RICE, RICE_MEAL, G_PER_LB, cupsText, gramsText } from '../../lib/kitchen';
+const w = RICE.white, main = RICE_MEAL.main.g, side = RICE_MEAL.side.g;
+const cups = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20];
+const lbs = [1, 2, 5, 10, 20, 25];
+---
+<Guide slug="/rice/how-many-people-does-rice-feed/" tool={{ href: '/rice-calculator/', name: 'rice calculator' }}>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Uncooked rice</th><th class="n">Weight</th><th class="n">Cooked</th><th class="n">Feeds as the main</th><th class="n">Feeds as a side</th></tr></thead>
+    <tbody>
+      {cups.map((c) => <tr><td>{cupsText(c)}</td><td class="n">{gramsText(c * w.gPerCup)}</td><td class="n">{cupsText(c * w.yieldVol)}</td><td class="n">{Math.floor(c * w.gPerCup / main)}</td><td class="n">{Math.floor(c * w.gPerCup / side)}</td></tr>)}
+      {lbs.map((l) => <tr><td>{l} lb</td><td class="n">{gramsText(l * G_PER_LB)}</td><td class="n">{cupsText(l * G_PER_LB / w.gPerCup * w.yieldVol)}</td><td class="n">{Math.floor(l * G_PER_LB / main)}</td><td class="n">{Math.floor(l * G_PER_LB / side)}</td></tr>)}
+    </tbody>
+  </table></div>
+  <p class="table-note">Long-grain white rice in US cups (237 ml), adults, normal appetite. A rice-cooker cup is smaller (180 ml), so it feeds about three quarters as many.</p>
+</Guide>

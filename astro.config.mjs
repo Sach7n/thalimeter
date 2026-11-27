@@ -31,7 +31,7 @@ export default defineConfig({
         const path = new URL(item.url).pathname;
         item.lastmod = new Date().toISOString();
         item.changefreq = 'monthly';
-        item.priority = path === '/' ? 1.0 : TOOL_PAGES.includes(path) ? 0.9 : /^\/(rice|pasta|meat)\//.test(path) ? 0.7 : 0.3;
+        item.priority = path === '/' ? 1.0 : TOOL_PAGES.includes(path) ? 0.9 : /^\/(rice|pasta|meat|questions)\//.test(path) ? 0.7 : 0.3;
         return item;
       },
     }),

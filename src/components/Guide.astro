@@ -1,0 +1,32 @@
+---
+// Answer page for one cluster of real search questions: short answer, chart, every question answered in the open.
+import Base from '../layouts/Base.astro';
+import AdSlot from './AdSlot.astro';
+import { guide, GUIDES } from '../lib/questions';
+import { faqLd, crumbLd } from '../lib/seo';
+interface Props { slug: string; tool: { href: string; name: string } }
+const { slug, tool } = Astro.props;
+const g = guide(slug);
+---
+<Base title={g.title} description={g.description} jsonld={[faqLd(g.faq), crumbLd([['Home', '/'], ['Questions', '/questions/'], [g.h1, slug]])]}>
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/questions/">Questions</a> › {g.h1.replace(/\?$/, '')}</nav>
+  <section class="hero">
+    <h1>{g.h1}</h1>
+    <p class="answer">{g.lede}</p>
+  </section>
+  <section><slot /></section>
+  <section class="section qa">
+    <h2>Quick answers</h2>
+    {g.faq.map((f) => <div class="qa-item"><h3>{f.q}</h3><p set:html={f.a} /></div>)}
+  </section>
+  <AdSlot />
+  <section class="section">
+    <h2>Work it out for your crowd</h2>
+    <p class="lede">Adults, children, appetite and how it is served all change the amount.</p>
+    <a class="btn" href={tool.href}>Open the {tool.name}</a>
+  </section>
+  <section class="section">
+    <h2>More questions</h2>
+    <ul class="links">{GUIDES.filter((x) => x.slug !== slug).map((x) => <li><a href={x.slug}>{x.h1.replace(/\?$/, '')}</a></li>)}<li><a href="/questions/">All questions</a></li></ul>
+  </section>
+</Base>

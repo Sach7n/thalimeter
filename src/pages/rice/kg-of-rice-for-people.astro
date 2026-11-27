@@ -1,0 +1,20 @@
+---
+import Guide from '../../components/Guide.astro';
+import { RICE_MEAL, gramsText, lbText } from '../../lib/kitchen';
+import { RICE_COUNTS } from '../../lib/presets';
+const { side, main, ricedish } = RICE_MEAL;
+const counts = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 300, 500];
+const bags = [1, 2, 5, 6, 8, 10, 12, 20, 25, 50];
+---
+<Guide slug="/rice/kg-of-rice-for-people/" tool={{ href: '/rice-calculator/', name: 'rice calculator' }}>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>People</th><th class="n">As a side</th><th class="n">As the main</th><th class="n">Biryani or pulao</th></tr></thead>
+    <tbody>{counts.map((n) => <tr><td>{RICE_COUNTS.includes(n) ? <a href={`/rice/for-${n}-people/`}>{n} people</a> : `${n} people`}</td><td class="n">{gramsText(n * side.g)}</td><td class="n">{gramsText(n * main.g)}</td><td class="n">{gramsText(n * ricedish.g)}</td></tr>)}</tbody>
+  </table></div>
+  <p class="table-note">Uncooked rice, adults, normal appetite. A child under 12 counts as half. For a buffet with many dishes, use about three quarters.</p>
+  <h2 class="section">How many people a bag of rice feeds</h2>
+  <div class="table-wrap" style="margin-top:18px"><table class="table">
+    <thead><tr><th>Uncooked rice</th><th class="n">As the main</th><th class="n">Biryani or pulao</th><th class="n">As a side</th></tr></thead>
+    <tbody>{bags.map((k) => <tr><td>{k} kg <span class="muted">({lbText(k * 1000)})</span></td><td class="n">{Math.floor(k * 1000 / main.g)} people</td><td class="n">{Math.floor(k * 1000 / ricedish.g)} people</td><td class="n">{Math.floor(k * 1000 / side.g)} people</td></tr>)}</tbody>
+  </table></div>
+</Guide>

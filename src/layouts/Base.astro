@@ -64,7 +64,7 @@ const footerRice = [4, 6, 8, 10, 12, 20, 50, 100].filter((n) => RICE_COUNTS.incl
         <div><h4>Calculators</h4><ul>{TOOLS.map((t) => <li><a href={t.href}>{t.name}</a></li>)}</ul></div>
         <div><h4>Rice for</h4><ul>{footerRice.map((n) => <li><a href={`/rice/for-${n}-people/`}>{n} people</a></li>)}</ul></div>
         <div><h4>Pasta for</h4><ul>{[4, 10, 20, 50, 100].map((n) => <li><a href={`/pasta/for-${n}-people/`}>{n} people</a></li>)}</ul></div>
-        <div><h4>ThaliMeter</h4><ul><li><a href="/about/">About</a></li><li><a href="/how-we-calculate/">How we calculate</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="/contact/">Contact</a></li></ul></div>
+        <div><h4>ThaliMeter</h4><ul><li><a href="/about/">About</a></li><li><a href="/questions/">Questions people ask</a></li><li><a href="/how-we-calculate/">How we calculate</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="/contact/">Contact</a></li></ul></div>
       </div>
       <p class="fineprint">All amounts are planning estimates. Appetites, recipes and packaging vary. © {year} {site.operator}.</p>
     </div>

@@ -222,3 +222,13 @@ p { margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 p.answer { display: block; }
+
+/* Answer pages: every question answered in the open */
+.qa { max-width: 72ch; }
+.qa-item { padding: 18px 0; border-bottom: 1px solid var(--steel-3); }
+.qa-item:first-of-type { border-top: 2px solid var(--ink); }
+.qa-item h3 { font-size: 19px; }
+.qa-item p { margin-top: 6px; color: var(--ink-2); }
+.qa-group + .qa-group { margin-top: 56px; }
+.qa-more { margin-top: 14px; font-weight: 700; }
+.section > .btn { margin-top: 4px; }

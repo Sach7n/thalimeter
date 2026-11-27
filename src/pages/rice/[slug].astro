@@ -87,6 +87,6 @@ const tableHead = p.kind === 'count' ? 'How rice is served' : 'Main dish for';
   </section>
   <section class="section">
     <h2>By type of rice</h2>
-    <ul class="links">{RICE_TYPE_PAGES.map((r) => <li><a href={`/rice/${r.slug}/`}>{r.name[0].toUpperCase() + r.name.slice(1)}</a></li>)}<li><a href="/rice-to-water-ratio/">Rice to water ratio</a></li></ul>
+    <ul class="links">{RICE_TYPE_PAGES.map((r) => <li><a href={`/rice/${r.slug}/`}>{r.name[0].toUpperCase() + r.name.slice(1)}</a></li>)}<li><a href="/rice-to-water-ratio/">Rice to water ratio</a></li><li><a href="/rice/kg-of-rice-for-people/">Kg of rice for a crowd</a></li><li><a href="/rice/how-many-people-does-rice-feed/">How many people a cup feeds</a></li></ul>
   </section>
 </Base>
