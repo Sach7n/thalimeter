@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { RICE, RICE_DEFAULT, RICE_MEAL, RICE_METHOD_LABEL, rice, cupsText, gramsText, litresText, quartsText, round, type RiceInput, type RiceType, type RiceMeal, type RiceMethod, type Appetite } from '../lib/kitchen';
-import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar } from './ui';
+import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid } from './ui';
 
 export default function RiceCalculator({ preset = {} }: { preset?: Partial<RiceInput> }) {
   const [s, setS] = useState<RiceInput>({ ...RICE_DEFAULT, ...preset });
@@ -33,7 +33,7 @@ export default function RiceCalculator({ preset = {} }: { preset?: Partial<RiceI
           <Check label="Buffet with lots of other dishes" checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
           <Check label="Extra for seconds or leftovers" checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
         </div>
-        <MobileBar label="Uncooked rice" value={dryMain} />
+        <MobileBar label="Uncooked rice" value={dryMain} people={s.adults + s.kids} />
       </div>
 
       <div className="calc-result" aria-live="polite">
@@ -41,13 +41,13 @@ export default function RiceCalculator({ preset = {} }: { preset?: Partial<RiceI
           <span className="result-kicker">Cook this much uncooked rice</span>
           <UnitToggle value={units} onChange={setUnits} />
         </div>
-        <p className="result-big">{dryMain}</p>
+        <p className="result-big"><ResultLid n={s.adults + s.kids} />{dryMain}</p>
         <p className="result-sub">{drySub}</p>
         <div className="stats">
-          <Stat icon="💧" label="Water" main={water} sub={s.method === 'cooker' ? 'or fill to your cooker’s line' : `${t.water[s.method]} : 1 water to rice`} />
-          <Stat icon="🍚" label="Cooked rice" main={us ? cupsText(r.cookedCups) : gramsText(r.cookedG)} sub={us ? gramsText(r.cookedG) : cupsText(r.cookedCups)} />
-          <Stat icon="🍲" label="Pot size" main={us ? quartsText(r.potL * 1000) : `${r.potL} L`} sub={us ? `${r.potL} L or bigger` : `${quartsText(r.potL * 1000)} or bigger`} />
-          <Stat icon="⏱" label="Cook time" main={r.minutes ? `${r.minutes} min` : 'Cooker setting'} sub={s.method === 'instantpot' ? 'high pressure + 10 min natural release' : s.method === 'stovetop' ? 'covered, low heat, then rest 10 min' : `${r.cookerBatches.small} batch${r.cookerBatches.small > 1 ? 'es' : ''} in a 5.5-cup cooker`} />
+          <Stat label="Water" main={water} sub={s.method === 'cooker' ? 'or fill to your cooker’s line' : `${t.water[s.method]} : 1 water to rice`} />
+          <Stat label="Cooked rice" main={us ? cupsText(r.cookedCups) : gramsText(r.cookedG)} sub={us ? gramsText(r.cookedG) : cupsText(r.cookedCups)} />
+          <Stat label="Pot size" main={us ? quartsText(r.potL * 1000) : `${r.potL} L`} sub={us ? `${r.potL} L or bigger` : `${quartsText(r.potL * 1000)} or bigger`} />
+          <Stat label="Cook time" main={r.minutes ? `${r.minutes} min` : 'Cooker setting'} sub={s.method === 'instantpot' ? 'high pressure + 10 min natural release' : s.method === 'stovetop' ? 'covered, low heat, then rest 10 min' : `${r.cookerBatches.small} batch${r.cookerBatches.small > 1 ? 'es' : ''} in a 5.5-cup cooker`} />
         </div>
         <p className="result-note">Per person: <b>{gramsText(r.perPersonDryG)}</b> uncooked. {t.tip}</p>
         <div className="result-actions"><CopyButton text={summary} /></div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MEAT, MEAT_DEFAULT, MEAT_SHARE, meat, gramsText, lbText, type MeatInput, type MeatType, type MeatShare, type Appetite } from '../lib/kitchen';
-import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar } from './ui';
+import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid } from './ui';
 
 export default function MeatCalculator({ preset = {} }: { preset?: Partial<MeatInput> }) {
   const [s, setS] = useState<MeatInput>({ ...MEAT_DEFAULT, ...preset });
@@ -27,16 +27,16 @@ export default function MeatCalculator({ preset = {} }: { preset?: Partial<MeatI
           <Check label="Lots of sides or a buffet" checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
           <Check label="Extra for seconds or leftovers" checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
         </div>
-        <MobileBar label="Raw meat to buy" value={us ? lbText(r.rawG) : gramsText(r.rawG)} />
+        <MobileBar label="Raw meat to buy" value={us ? lbText(r.rawG) : gramsText(r.rawG)} people={s.adults + s.kids} />
       </div>
       <div className="calc-result" aria-live="polite">
         <div className="result-head"><span className="result-kicker">Buy this much (raw weight)</span><UnitToggle value={units} onChange={setUnits} /></div>
-        <p className="result-big">{us ? lbText(r.rawG) : gramsText(r.rawG)}</p>
+        <p className="result-big"><ResultLid n={s.adults + s.kids} />{us ? lbText(r.rawG) : gramsText(r.rawG)}</p>
         <p className="result-sub">{us ? gramsText(r.rawG) : lbText(r.rawG)}{r.patties ? ` · ${r.patties} patties of ⅓ lb (150 g)` : ''}</p>
         <div className="stats">
-          <Stat icon="👤" label="Per person" main={us ? lbText(r.perPersonG) : gramsText(r.perPersonG)} sub="raw" />
-          <Stat icon="🍖" label="On the plate" main={t.cookedNote.split(';')[0]} sub="per adult, only main" />
-          <Stat icon="🥩" label="Examples" main={<span className="stat-text">{t.examples}</span>} />
+          <Stat label="Per person" main={us ? lbText(r.perPersonG) : gramsText(r.perPersonG)} sub="raw" />
+          <Stat label="On the plate" main={t.cookedNote.split(';')[0]} sub="per adult, only main" />
+          <Stat label="Examples" main={<span className="stat-text">{t.examples}</span>} />
         </div>
         <p className="result-note">Raw weight is what you buy. Meat loses about 25% of its weight when cooked, and slow-cooked cuts like brisket and pork shoulder lose about half.</p>
         <div className="result-actions"><CopyButton text={summary} /></div>

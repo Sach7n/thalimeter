@@ -1,13 +1,18 @@
 <!doctype html><html><head><meta charset="utf-8"><style>
-@font-face{font-family:F;src:url(fraunces-latin-wght-normal.woff2)}@font-face{font-family:D;src:url(dm-sans-latin-wght-normal.woff2)}
-body{margin:0;width:1200px;height:630px;background:#fff6ee;font-family:D;color:#221c17;display:flex;flex-direction:column;justify-content:center;padding:0 90px;box-sizing:border-box;position:relative;overflow:hidden}
-.logo{display:flex;align-items:center;gap:18px;font:700 52px F}.logo b{color:#c2410c}
-h1{font:650 86px/1.02 F;margin:46px 0 22px;letter-spacing:-2px;max-width:760px}
-p{font-size:32px;color:#6d6158;margin:0}
-.bowl{position:absolute;right:-40px;bottom:-30px;width:470px;opacity:1}
+@font-face{font-family:B;src:url(big-shoulders-latin-wght-normal.woff2);font-weight:100 900}
+@font-face{font-family:A;src:url(public-sans-latin-wght-normal.woff2);font-weight:200 800}
+body{margin:0;width:1200px;height:630px;background:#e6e9e8;font-family:A;color:#16191b;position:relative;overflow:hidden;box-sizing:border-box;padding:60px 84px}
+.word{display:flex;align-items:center;gap:20px;font:800 54px/1 B;letter-spacing:.02em;text-transform:uppercase}
+.word svg{width:72px;height:72px}
+h1{font:800 108px/.92 B;text-transform:uppercase;margin:64px 0 28px;letter-spacing:-.01em;max-width:700px}
+p{font-size:30px;line-height:1.3;margin:0;color:#3b4245;max-width:600px}
+.codes{display:flex;gap:14px;margin-top:34px}
+.codes span{font:800 26px/1 B;text-transform:uppercase;letter-spacing:.06em;color:#fff;padding:12px 20px;border-radius:999px}
+.lid{position:absolute;right:-70px;top:95px;width:500px;height:500px}
 </style></head><body>
-<div class="logo"><svg width="70" height="70" viewBox="0 0 40 40"><path d="M5 19h30a15 15 0 0 1-30 0z" fill="#c2410c"/><path d="M8 19h24" stroke="#9a3412" stroke-width="2" stroke-linecap="round"/><path d="M15 14c-2-2.5 2-4.5 0-7M20 14c-2-2.5 2-4.5 0-7M25 14c-2-2.5 2-4.5 0-7" stroke="#15803d" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg><span>Thali<b>Meter</b></span></div>
+<div class="word"><img src="mark.svg" width="72" height="72" alt=""><span>ThaliMeter</span></div>
 <h1>Cook the right amount.</h1>
-<p>Rice · Pasta · Meat — per person calculators</p>
-<svg class="bowl" viewBox="0 0 40 40"><path d="M5 19h30a15 15 0 0 1-30 0z" fill="#fdd9bf"/><path d="M15 14c-2-2.5 2-4.5 0-7M20 14c-2-2.5 2-4.5 0-7M25 14c-2-2.5 2-4.5 0-7" stroke="#bbe5c8" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>
+<p>Rice, water, pasta and meat for any number of people. Cups and grams.</p>
+<div class="codes"><span style="background:#d7261e">Rice</span><span style="background:#2443b8">Water</span><span style="background:#f2b705;color:#16191b">Pasta</span><span style="background:#1f8a4c">Meat</span></div>
+<img class="lid" src="mark.svg" alt="">
 </body></html>

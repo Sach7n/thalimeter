@@ -3,13 +3,13 @@ import Base from '../../layouts/Base.astro';
 import PastaCalculator from '../../components/PastaCalculator';
 import Faq from '../../components/Faq.astro';
 import AdSlot from '../../components/AdSlot.astro';
+import Lid from '../../components/Lid.astro';
 import { pasta, PASTA, PASTA_DEFAULT, gramsText, lbText, litresText, quartsText, round, type PastaType } from '../../lib/kitchen';
 import { PASTA_COUNTS } from '../../lib/presets';
 import { faqLd, appLd, crumbLd } from '../../lib/seo';
 export function getStaticPaths() { return PASTA_COUNTS.map((n) => ({ params: { slug: `for-${n}-people` }, props: { n } })); }
 const { n } = Astro.props as { n: number };
 const m = pasta({ ...PASTA_DEFAULT, adults: n }), s = pasta({ ...PASTA_DEFAULT, adults: n, meal: 'side' });
-const answer = `For ${n} people, cook <b>${gramsText(m.g)} (${lbText(m.g)}) of dry pasta</b> as a main course, or ${gramsText(s.g)} (${lbText(s.g)}) as a side. That is about <b>${round(m.boxes16oz, 0.25)} boxes of 1 lb</b> or ${round(m.packs500g, 0.25)} packs of 500 g.`;
 const description = `Pasta for ${n} people: ${gramsText(m.g)} (${lbText(m.g)}) dry pasta as a main, about ${Math.ceil(m.boxes16oz)} boxes of 1 lb. Plus water, salt and sauce.`;
 const types = Object.keys(PASTA) as PastaType[];
 const faq = [
@@ -19,11 +19,18 @@ const faq = [
 ];
 const path = Astro.url.pathname;
 ---
-<Base title={`How Much Pasta for ${n} People`} description={description} jsonld={[appLd('Pasta calculator', path, description), faqLd(faq), crumbLd([['Home', '/'], ['Pasta calculator', '/pasta-calculator/'], [`Pasta for ${n} people`, path]])]}>
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/pasta-calculator/">Pasta calculator</a></nav>
+<Base title={`How Much Pasta for ${n} People? ${gramsText(m.g)} (${lbText(m.g)}) Dry`} description={description} jsonld={[appLd('Pasta calculator', path, description), faqLd(faq), crumbLd([['Home', '/'], ['Pasta calculator', '/pasta-calculator/'], [`Pasta for ${n} people`, path]])]}>
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/pasta-calculator/">Pasta calculator</a> › Pasta for {n} people</nav>
   <section class="hero">
-    <h1>How much pasta for {n} people</h1>
-    <p class="answer" set:html={answer} />
+    <h1>How much pasta for {n} people?</h1>
+    <div class="answer">
+      <Lid n={n} size="lg" label={`${n} people`} />
+      <div class="answer-figs">
+        <div class="fig"><span class="fig-label">As a main course</span><span class="fig-main">{gramsText(m.g)}</span><span class="fig-sub">{lbText(m.g)} dry · {round(m.boxes16oz, 0.25)} × 1 lb box · {round(m.packs500g, 0.25)} × 500 g pack</span></div>
+        <div class="fig"><span class="fig-label">As a side or starter</span><span class="fig-main">{gramsText(s.g)}</span><span class="fig-sub">{lbText(s.g)} dry</span></div>
+      </div>
+    </div>
+    <p class="answer-note">Boil it in about {litresText(m.waterL * 1000)} of water with {round(m.saltTsp, 0.5)} tsp of salt{m.waterL > 8 ? ', in two or more batches' : ''}. Sauce: about {gramsText(m.sauceG)}, or {round(m.sauceJars24oz, 0.5)} jars of 24 oz.</p>
   </section>
   <section>
     <div class="table-wrap"><table class="table">
@@ -33,13 +40,13 @@ const path = Astro.url.pathname;
   </section>
   <section class="section">
     <h2>Change the numbers</h2>
-    <p class="muted" style="margin:8px 0 16px">Add children, change the pasta, or plan for a buffet.</p>
+    <p class="lede">Add children, change the pasta, or plan for a buffet.</p>
     <PastaCalculator client:visible preset={{ adults: n }} />
   </section>
-  <AdSlot slot="" />
+  <AdSlot />
   <Faq items={faq} />
   <section class="section">
-    <h2>More pasta amounts</h2>
-    <ul class="links" style="margin-top:12px">{PASTA_COUNTS.map((c) => <li><a href={`/pasta/for-${c}-people/`}>{c} people</a></li>)}</ul>
+    <h2>Pasta for more people</h2>
+    <ul class="lids">{PASTA_COUNTS.map((c) => <li><a href={`/pasta/for-${c}-people/`} aria-current={c === n ? 'page' : undefined}><Lid n={c} /><span>people</span></a></li>)}</ul>
   </section>
 </Base>

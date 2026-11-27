@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-27T00:00:00Z",
+  "title": "Design System: ThaliMeter",
+  "extensions": {
+    "colorMeta": {
+      "rice-vermilion": { "role": "primary", "displayName": "Rice Vermilion", "tonalRamp": ["oklch(22% 0.07 29)", "oklch(32% 0.11 29)", "oklch(42% 0.16 29)", "oklch(56% 0.21 29)", "oklch(66% 0.17 29)", "oklch(76% 0.12 29)", "oklch(86% 0.07 29)", "oklch(95% 0.025 29)"] },
+      "water-ultramarine": { "role": "secondary", "displayName": "Ultramarine", "tonalRamp": ["oklch(20% 0.07 267)", "oklch(30% 0.12 267)", "oklch(40% 0.17 267)", "oklch(50% 0.19 267)", "oklch(62% 0.16 267)", "oklch(74% 0.11 267)", "oklch(85% 0.06 267)", "oklch(95% 0.02 267)"] },
+      "pasta-chrome-yellow": { "role": "secondary", "displayName": "Chrome Yellow", "tonalRamp": ["oklch(25% 0.05 85)", "oklch(38% 0.08 85)", "oklch(52% 0.11 85)", "oklch(66% 0.14 85)", "oklch(80% 0.17 85)", "oklch(86% 0.13 85)", "oklch(91% 0.08 85)", "oklch(97% 0.03 85)"] },
+      "pasta-ink": { "role": "secondary", "displayName": "Deep Mustard" },
+      "meat-signal-green": { "role": "secondary", "displayName": "Signal Green", "tonalRamp": ["oklch(20% 0.05 152)", "oklch(30% 0.08 152)", "oklch(42% 0.11 152)", "oklch(54% 0.14 152)", "oklch(65% 0.14 152)", "oklch(76% 0.1 152)", "oklch(86% 0.06 152)", "oklch(95% 0.02 152)"] },
+      "water-on-ink": { "role": "tertiary", "displayName": "Bright Ultramarine (on ink only)" },
+      "meat-on-ink": { "role": "tertiary", "displayName": "Bright Signal Green (on ink only)" },
+      "steel": { "role": "neutral", "displayName": "Brushed Steel", "tonalRamp": ["#16191b", "#353c3f", "#535b5e", "#7f898c", "#aeb7b4", "#d3d9d7", "#e6e9e8", "#f4f6f5"] },
+      "steel-2": { "role": "neutral", "displayName": "Steel Shade" },
+      "steel-3": { "role": "neutral", "displayName": "Steel Rim" },
+      "plate": { "role": "neutral", "displayName": "White Plate" },
+      "ink": { "role": "neutral", "displayName": "Ink" },
+      "ink-2": { "role": "neutral", "displayName": "Ink Soft" },
+      "muted": { "role": "neutral", "displayName": "Muted Ink" },
+      "on-ink": { "role": "neutral", "displayName": "On-Ink" },
+      "on-ink-muted": { "role": "neutral", "displayName": "On-Ink Muted" },
+      "ink-rule": { "role": "neutral", "displayName": "Ink Rule" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "H1 on every page, uppercase, balanced." },
+      "headline": { "displayName": "Headline", "purpose": "Section H2s, uppercase." },
+      "numeral-result": { "displayName": "Result Numeral", "purpose": "Live answer in the ink result panel." },
+      "numeral-answer": { "displayName": "Answer Numeral", "purpose": "Cups figures on the answer plate; inputs at 32px, stats at 26px." },
+      "title": { "displayName": "Title", "purpose": "H3s and tool-row names." },
+      "body": { "displayName": "Body", "purpose": "All prose, tabular figures." },
+      "label": { "displayName": "Label", "purpose": "Field, figure and result labels, sentence case." }
+    },
+    "shadows": [
+      { "name": "lift", "value": "0 1px 2px rgba(22,25,27,.08), 0 14px 32px -14px rgba(22,25,27,.28)", "purpose": "Calculator plate and the phone sticky answer bar only." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "All transitions: nav underline wipe (.35s), lid hover tilt (.3s), tool-row arrow (.3s), FAQ plus rotate (.3s)." },
+      { "name": "stamp", "value": "scale(1.18) rotate(-14deg) to rest, .45s var(--ease)", "purpose": "Live lid re-stamps when the headcount changes." },
+      { "name": "reduced-motion", "value": "all transitions and animations off", "purpose": "prefers-reduced-motion: reduce." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "520px" },
+      { "name": "tool-rows-stack", "value": "640px" },
+      { "name": "calc-two-column", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Painted Lid",
+      "kind": "custom",
+      "refersTo": "lid",
+      "description": "Signature mark: steel-rimmed lid with the headcount painted in the tool colour.",
+      "html": "<span class=\"ds-lid\" role=\"img\" aria-label=\"8 people\">8</span>",
+      "css": ".ds-lid { --s: 84px; --tool: #d7261e; display: inline-grid; place-items: center; width: var(--s); height: var(--s); border-radius: 50%; background: #fff; border: calc(var(--s) * .06) solid #16191b; box-shadow: inset 0 0 0 calc(var(--s) * .07) var(--tool); color: var(--tool); font: 800 calc(var(--s) * .44)/1 'Big Shoulders Variable', 'Arial Narrow', sans-serif; transition: transform .3s cubic-bezier(.16,1,.3,1), border-color .2s; } .ds-lid:hover { transform: translateY(-3px) rotate(-8deg); border-color: var(--tool); }"
+    },
+    {
+      "name": "Answer Plate",
+      "kind": "card",
+      "refersTo": "answer-plate",
+      "description": "The answer under the H1: large lid plus cups and grams figures.",
+      "html": "<div class=\"ds-answer\"><span class=\"ds-answer-lid\">8</span><div class=\"ds-figs\"><div><span class=\"ds-fl\">As a side dish</span><span class=\"ds-fm\">2 cups</span><span class=\"ds-fs\">400 g · 0.9 lb uncooked</span></div><div><span class=\"ds-fl\">As the main</span><span class=\"ds-fm\">4 cups</span><span class=\"ds-fs\">680 g · 1.5 lb uncooked</span></div></div></div>",
+      "css": ".ds-answer { display: flex; gap: 22px; align-items: center; background: #fff; border: 2px solid #16191b; border-radius: 22px; padding: 20px 24px; font: 400 19px/1.5 'Public Sans Variable', system-ui, sans-serif; color: #16191b; } .ds-answer-lid { width: 116px; height: 116px; flex: none; display: grid; place-items: center; border-radius: 50%; background: #fff; border: 7px solid #16191b; box-shadow: inset 0 0 0 8px #d7261e; color: #d7261e; font: 800 51px/1 'Big Shoulders Variable', sans-serif; } .ds-figs { display: grid; gap: 14px 28px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); flex: 1; } .ds-figs > div { display: grid; gap: 2px; } .ds-fl { font-weight: 700; font-size: 15px; color: #535b5e; } .ds-fm { font: 800 48px/1 'Big Shoulders Variable', sans-serif; } .ds-fs { font-size: 15px; color: #353c3f; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink pill button.",
+      "html": "<button class=\"ds-btn\">Copy answer</button>",
+      "css": ".ds-btn { min-height: 46px; padding: 0 20px; border-radius: 999px; border: 2px solid #16191b; background: #16191b; color: #f4f6f5; font: 700 15px 'Public Sans Variable', system-ui, sans-serif; cursor: pointer; } .ds-btn:hover { background: #353c3f; color: #fff; } .ds-btn:focus-visible { outline: 3px solid #2443b8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button on Ink",
+      "kind": "button",
+      "refersTo": "button-ghost-on-ink",
+      "description": "Secondary action inside the ink result panel.",
+      "html": "<div style=\"background:#16191b;padding:16px;border-radius:16px\"><button class=\"ds-btn-ghost\">Copy</button></div>",
+      "css": ".ds-btn-ghost { min-height: 46px; padding: 0 20px; border-radius: 999px; border: 2px solid #b4bcbf; background: transparent; color: #f4f6f5; font: 700 15px 'Public Sans Variable', system-ui, sans-serif; cursor: pointer; } .ds-btn-ghost:hover { background: #f4f6f5; color: #16191b; border-color: #f4f6f5; } .ds-btn-ghost:focus-visible { outline: 3px solid #2443b8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Choice Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Single-choice option; selected fills with the tool code.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-chip\" aria-pressed=\"true\">Side dish</button><button class=\"ds-chip\" aria-pressed=\"false\">Main</button></div>",
+      "css": ".ds-chip { min-height: 46px; padding: 8px 14px; border-radius: 10px; border: 1.5px solid #aeb7b4; background: #fff; color: #16191b; font: 600 15px/1.2 'Public Sans Variable', system-ui, sans-serif; cursor: pointer; transition: background .15s, border-color .15s, color .15s; } .ds-chip:hover { border-color: #16191b; } .ds-chip[aria-pressed=\"true\"] { background: #d7261e; border-color: #d7261e; color: #fff; font-weight: 700; } .ds-chip:focus-visible { outline: 3px solid #2443b8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Stepper",
+      "kind": "input",
+      "refersTo": "stepper-input",
+      "description": "Headcount input with steel minus and plus buttons.",
+      "html": "<div class=\"ds-stepper\"><button aria-label=\"Fewer\">-</button><input type=\"number\" value=\"8\" aria-label=\"People\"><button aria-label=\"More\">+</button></div>",
+      "css": ".ds-stepper { display: flex; border: 2px solid #16191b; border-radius: 10px; overflow: hidden; background: #fff; max-width: 260px; } .ds-stepper button { width: 52px; min-height: 52px; border: 0; background: #e6e9e8; color: #16191b; font: 700 22px sans-serif; cursor: pointer; transition: background .15s; } .ds-stepper button:hover { background: #d3d9d7; } .ds-stepper button:active { background: #d7261e; color: #fff; } .ds-stepper input { flex: 1; min-width: 0; border: 0; text-align: center; font: 800 32px/1 'Big Shoulders Variable', sans-serif; color: #16191b; background: transparent; } .ds-stepper input:focus-visible { outline: 3px solid #2443b8; outline-offset: -3px; }"
+    },
+    {
+      "name": "Header Nav",
+      "kind": "nav",
+      "refersTo": "site-header",
+      "description": "Ink header; each tool link carries its code dot and underline.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\" style=\"--c:#d7261e\">Rice</a><a href=\"#\" style=\"--c:#5b78e8\">Water ratio</a><a href=\"#\" style=\"--c:#f2b705\">Pasta</a><a href=\"#\" style=\"--c:#2fae63\">Meat</a></nav>",
+      "css": ".ds-nav { display: flex; flex-wrap: wrap; background: #16191b; padding: 0 10px; } .ds-nav a { position: relative; color: #f4f6f5; text-decoration: none; font: 700 15px 'Public Sans Variable', system-ui, sans-serif; padding: 12px 10px; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; } .ds-nav a::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--c); } .ds-nav a::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: 4px; height: 4px; border-radius: 4px; background: var(--c); transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.16,1,.3,1); } .ds-nav a:hover { color: #fff; } .ds-nav a:hover::after, .ds-nav a[aria-current=\"page\"]::after { transform: scaleX(1); } .ds-nav a:focus-visible { outline: 3px solid #2443b8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Tool Row",
+      "kind": "custom",
+      "refersTo": "tool-tag-rice",
+      "description": "Tool index row with a painted pill tag; rows, not icon cards.",
+      "html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-tag\">Rice</span><span class=\"ds-rt\">Rice calculator</span><span class=\"ds-rb\">How much rice per person, in cups and grams.</span><svg class=\"ds-go\" viewBox=\"0 0 24 24\" width=\"28\" height=\"28\" aria-hidden=\"true\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h15M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-row { display: grid; grid-template-columns: 130px 1fr auto; gap: 4px 20px; align-items: center; padding: 18px 8px; border-top: 2px solid #16191b; border-bottom: 1px solid #aeb7b4; text-decoration: none; color: #16191b; font-family: 'Public Sans Variable', system-ui, sans-serif; transition: background .2s; } .ds-row:hover { background: #fff; } .ds-tag { grid-row: 1 / span 2; justify-self: start; font: 800 18px/1 'Big Shoulders Variable', sans-serif; text-transform: uppercase; letter-spacing: .05em; padding: 9px 14px 8px; border-radius: 999px; background: #d7261e; color: #fff; } .ds-rt { font-weight: 700; font-size: 19px; } .ds-rb { grid-column: 2; color: #535b5e; font-size: 15px; } .ds-go { grid-row: 1 / span 2; grid-column: 3; transition: transform .3s cubic-bezier(.16,1,.3,1); } .ds-row:hover .ds-go { transform: translateX(4px); } .ds-row:focus-visible { outline: 3px solid #2443b8; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ad Slot",
+      "kind": "custom",
+      "refersTo": "ad-slot",
+      "description": "Labelled ad placeholder with reserved height; only between content sections.",
+      "html": "<aside class=\"ds-ad\" aria-label=\"Advertisement\"><span class=\"ds-ad-label\">Advertisement</span><div class=\"ds-ad-well\"></div></aside>",
+      "css": ".ds-ad { margin: 48px 0; min-height: 300px; display: flex; flex-direction: column; } .ds-ad-label { font: 400 12px 'Public Sans Variable', system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #535b5e; padding-bottom: 6px; text-align: center; } .ds-ad-well { flex: 1; min-height: 280px; background: #d3d9d7; border-radius: 10px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Painted Tiffin Lid",
+    "overview": "ThaliMeter reads portion planning as a coding system, the way Mumbai tiffin carriers are marked with painted codes on their steel lids. The ground is pale brushed steel, the working surfaces are plain white plates, and the ink is a near-black. On top of that neutral metal sit four painted code colours, one per tool, and a single signature mark: a steel-rimmed lid with a number painted in its well. Every headcount, every answer hero and the live calculator result carry that lid, so the number you came for is legible at arm's length with a phone in one hand.\n\nThe voice is a sign-painter's, not a magazine's. Headings and numerals are set in a heavy condensed face in capitals; everything you actually read is a plain, sturdy sans. Density is moderate: the answer comes first in large numerals, both unit systems side by side, then the table, then the calculator plate. Surfaces are flat steel and white; depth is one soft lift reserved for the working calculator and the phone answer bar.\n\nThe build replaced a cream-paper, serif-display, emoji-card, terracotta-accent site. That category default is the confirmed rejection.",
+    "keyCharacteristics": [
+      "Brushed-steel ground, white plates, near-black ink; colour only as painted tool codes.",
+      "One code colour per tool, set by `data-tool` on the body or a section, never mixed inside one tool.",
+      "The painted lid is the signature and appears wherever a headcount or answer is shown.",
+      "Condensed uppercase display for headings and numbers; plain sans for every sentence; tabular figures everywhere.",
+      "Flat surfaces with one soft lift; heavy 2px ink rules carry structure."
+    ],
+    "rules": [
+      { "name": "The One Code Per Tool Rule", "body": "Each tool owns one painted colour (rice vermilion, water ultramarine, pasta chrome yellow, meat signal green). A surface sets its tool with `data-tool`, and every accent on it (lid ring and number, selected chip, link underline, list marker, FAQ plus) follows `--tool` / `--tool-ink`. Never hard-code a second tool's colour inside a tool's surface; the only place all four appear together is navigation and the brand mark. The one cross-tool exception is the ultramarine focus ring, which stays constant so keyboard focus looks the same everywhere.", "section": "colors" },
+      { "name": "The Yellow Carries Ink Rule", "body": "Chrome yellow is a fill colour only. Anything set on it is ink; any yellow-coded text or numeral uses Deep Mustard.", "section": "colors" },
+      { "name": "The Steel Is Not Paper Rule", "body": "Backgrounds are cool steel grey and white. No cream, beige or warm paper tones.", "section": "colors" },
+      { "name": "The Numbers Are Painted Rule", "body": "Every answer quantity a visitor came for is set in Big Shoulders 800. Every sentence, label and table cell is Public Sans. Do not set running text in the display face or answer numerals in the sans.", "section": "typography" },
+      { "name": "The Sentence-Case Labels Rule", "body": "Uppercase belongs to Big Shoulders headings, tool tags and the logo wordmark. Labels in Public Sans stay sentence case and untracked; the one exception is the \"Advertisement\" label (12px, 0.08em, uppercase), which exists for ad disclosure.", "section": "typography" },
+      { "name": "The Answer First Rule", "body": "The answer plate (or, on tool pages, the calculator with its result) is the first thing under the H1. Nothing, including an ad, sits between the H1 and the answer.", "section": "layout" },
+      { "name": "The One Lift Rule", "body": "Only the live calculator and its phone answer bar are lifted. Answer plates, tables, chips and cards stay flat with borders.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** set `data-tool` (rice, water, pasta, meat) on the body or a section and colour accents through `--tool` and `--tool-ink`.",
+      "**Do** put the answer, in cups and grams (and pounds where relevant), directly under the H1 in an answer plate with a lid.",
+      "**Do** use the lid for every headcount link and live result; current page fills solid in the tool colour.",
+      "**Do** set answer numerals in Big Shoulders 800 and every sentence in Public Sans with tabular figures.",
+      "**Do** keep touch targets at least 44px (chips 46px, nav 48px, stepper buttons 52px).",
+      "**Do** place ad slots only between content sections, labelled \"Advertisement\", with 300px reserved height.",
+      "**Do** honour reduced motion: every transition and the lid stamp switch off."
+    ],
+    "donts": [
+      "**Don't** use cream or warm paper backgrounds, serif display type, emoji icon cards or a terracotta accent.",
+      "**Don't** put an ad inside a calculator, above the answer, or between the H1 and the answer plate.",
+      "**Don't** set white text on chrome yellow, or use chrome yellow as a text colour; use ink on it and Deep Mustard for yellow-coded text.",
+      "**Don't** mix two tool codes inside one tool's surface.",
+      "**Don't** add shadows beyond the single lift on the calculator plate and phone answer bar.",
+      "**Don't** lay out the tool index as icon cards; it is rows with painted tags.",
+      "**Don't** recolour the logo gauge or bowls."
+    ]
+  }
+}

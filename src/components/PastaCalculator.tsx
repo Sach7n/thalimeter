@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PASTA, PASTA_DEFAULT, PASTA_MEAL, pasta, gramsText, lbText, cupsText, litresText, quartsText, round, type PastaInput, type PastaType, type PastaMeal, type Appetite } from '../lib/kitchen';
-import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar } from './ui';
+import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid } from './ui';
 
 export default function PastaCalculator({ preset = {} }: { preset?: Partial<PastaInput> }) {
   const [s, setS] = useState<PastaInput>({ ...PASTA_DEFAULT, ...preset });
@@ -29,17 +29,17 @@ export default function PastaCalculator({ preset = {} }: { preset?: Partial<Past
           <Check label="Buffet with lots of other dishes" checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
           <Check label="Extra for seconds or leftovers" checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
         </div>
-        <MobileBar label={`${dryWord[0].toUpperCase()}${dryWord.slice(1)} pasta`} value={us ? lbText(r.g) : gramsText(r.g)} />
+        <MobileBar label={`${dryWord[0].toUpperCase()}${dryWord.slice(1)} pasta`} value={us ? lbText(r.g) : gramsText(r.g)} people={s.adults + s.kids} />
       </div>
       <div className="calc-result" aria-live="polite">
         <div className="result-head"><span className="result-kicker">Cook this much {dryWord} pasta</span><UnitToggle value={units} onChange={setUnits} /></div>
-        <p className="result-big">{us ? lbText(r.g) : gramsText(r.g)}</p>
+        <p className="result-big"><ResultLid n={s.adults + s.kids} />{us ? lbText(r.g) : gramsText(r.g)}</p>
         <p className="result-sub">{us ? gramsText(r.g) : lbText(r.g)} · {packs}{r.cups ? ` · about ${cupsText(r.cups)} dry` : ''}{r.bundles ? ` · ${Math.ceil(r.bundles)} quarter-size bundles` : ''}</p>
         <div className="stats">
-          <Stat icon="💧" label="Water to boil" main={us ? quartsText(r.waterL * 1000) : litresText(r.waterL * 1000)} sub="about 1 L per 100 g" />
-          <Stat icon="🧂" label="Salt for the water" main={`${round(r.saltTsp, 0.5)} tsp`} sub={`about ${round(r.saltG, 5)} g table salt`} />
-          <Stat icon="🫙" label="Sauce" main={us ? `${round(r.sauceJars24oz, 0.5)} × 24 oz jar` : gramsText(r.sauceG)} sub={us ? gramsText(r.sauceG) : `${round(r.sauceJars24oz, 0.5)} × 680 g jar`} />
-          <Stat icon="🍝" label="Cooked pasta" main={us ? lbText(r.cookedG) : gramsText(r.cookedG)} sub="after draining" />
+          <Stat label="Water to boil" main={us ? quartsText(r.waterL * 1000) : litresText(r.waterL * 1000)} sub="about 1 L per 100 g" />
+          <Stat label="Salt for the water" main={`${round(r.saltTsp, 0.5)} tsp`} sub={`about ${round(r.saltG, 5)} g table salt`} />
+          <Stat label="Sauce" main={us ? `${round(r.sauceJars24oz, 0.5)} × 24 oz jar` : gramsText(r.sauceG)} sub={us ? gramsText(r.sauceG) : `${round(r.sauceJars24oz, 0.5)} × 680 g jar`} />
+          <Stat label="Cooked pasta" main={us ? lbText(r.cookedG) : gramsText(r.cookedG)} sub="after draining" />
         </div>
         <p className="result-note">Per person: <b>{gramsText(r.perPersonG)}</b>. {t.tip}{r.waterL > 8 ? ' For this much pasta, cook in batches or use two pots.' : ''}</p>
         <div className="result-actions"><CopyButton text={summary} /></div>

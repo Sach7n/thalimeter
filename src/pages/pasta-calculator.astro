@@ -19,17 +19,17 @@ const faq = [
   <section class="hero">
     <h1>Pasta calculator</h1>
     <p>How much pasta to cook, how many boxes to buy, and how much water, salt and sauce you need.</p>
+    <p class="answer"><b>100 g (3½ oz) of dry pasta per person</b> for a main, <b>55 g (2 oz)</b> for a side. A 1 lb box feeds about 4 as a main.</p>
   </section>
   <PastaCalculator client:load />
-  <AdSlot slot="" />
+  <AdSlot />
   <section class="section prose">
-    <h2>Pasta per person: the quick answer</h2>
-    <p class="answer"><b>100 g (3½ oz) of dry pasta per person</b> for a main, <b>55 g (2 oz)</b> for a side. A 1 lb box feeds about 4 as a main.</p>
+    <h2>Why 100 g</h2>
     <p>Italian cooks plan 80–100 g for a first course. In the US and the UK, pasta is often the whole meal, so 100 g is a safer amount. For big eaters or teenagers, use 125 g.</p>
   </section>
   <section class="section">
     <h2>Pasta for a crowd: chart</h2>
-    <p class="muted" style="margin:8px 0 16px">Dry pasta, normal appetite, adults.</p>
+    <p class="lede">Dry pasta, normal appetite, adults.</p>
     <div class="table-wrap"><table class="table">
       <thead><tr><th>People</th><th class="n">As a side</th><th class="n">As a main</th><th class="n">1 lb boxes (main)</th><th class="n">500 g packs (main)</th></tr></thead>
       <tbody>{rows.map(({ n, side, main }) => (

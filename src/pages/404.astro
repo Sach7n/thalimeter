@@ -1,8 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import { TOOLS } from '../config';
+import ToolRows from '../components/ToolRows.astro';
 ---
 <Base title="Page not found" description="This page does not exist." noindex>
   <section class="hero"><h1>This pot is empty.</h1><p>We cannot find that page. Try one of our calculators:</p></section>
-  <ul class="tools">{TOOLS.map((t) => <li><a class="tool-card" href={t.href}><span class="ic" aria-hidden="true">{t.icon}</span><h3>{t.name}</h3><p>{t.blurb}</p></a></li>)}</ul>
+  <ToolRows />
 </Base>

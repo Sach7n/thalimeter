@@ -8,12 +8,22 @@ export function Stepper({ label, value, onChange, min = 0, max = 500, hint }: { 
     <div className="field">
       <label className="field-label" htmlFor={id}>{label}{hint && <small> {hint}</small>}</label>
       <div className="stepper">
-        <button type="button" aria-label={`Fewer ${label.toLowerCase()}`} onClick={() => set(value - 1)}>−</button>
+        <button type="button" aria-label={`Fewer ${label.toLowerCase()}`} onClick={() => set(value - 1)}><Icon d="minus" /></button>
         <input id={id} type="number" inputMode="numeric" min={min} max={max} value={value} onChange={(e) => set(Number(e.target.value))} />
-        <button type="button" aria-label={`More ${label.toLowerCase()}`} onClick={() => set(value + 1)}>+</button>
+        <button type="button" aria-label={`More ${label.toLowerCase()}`} onClick={() => set(value + 1)}><Icon d="plus" /></button>
       </div>
     </div>
   );
+}
+
+/** Authored icons: one 24px grid, 2.5 stroke, round caps (the painted-stroke set). */
+export function Icon({ d }: { d: 'plus' | 'minus' }) {
+  return <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d={d === 'plus' ? 'M12 5v14M5 12h14' : 'M5 12h14'} /></svg>;
+}
+/** The painted lid: headcount on a steel-rimmed plate. Re-keyed so each change re-stamps it. */
+export function ResultLid({ n }: { n: number }) {
+  const v = n;
+  return <span key={v} className="lid lid-live" role="img" aria-label={`${v} people`}>{v}</span>;
 }
 
 export function Choice<T extends string>({ label, value, options, onChange, wide }: { label: string; value: T; options: { v: T; label: string; hint?: string }[]; onChange: (v: T) => void; wide?: boolean }) {
@@ -40,10 +50,10 @@ export function Check({ label, checked, onChange, hint }: { label: string; check
   );
 }
 
-export function Stat({ label, main, sub, icon }: { label: string; main: ReactNode; sub?: ReactNode; icon?: string }) {
+export function Stat({ label, main, sub }: { label: string; main: ReactNode; sub?: ReactNode }) {
   return (
     <div className="stat">
-      <span className="stat-label">{icon && <span aria-hidden="true" className="stat-icon">{icon}</span>}{label}</span>
+      <span className="stat-label">{label}</span>
       <span className="stat-main">{main}</span>
       {sub && <span className="stat-sub">{sub}</span>}
     </div>
@@ -76,12 +86,12 @@ export function CopyButton({ text }: { text: string }) {
   const [done, setDone] = useState(false);
   return (
     <button type="button" className="btn btn-ghost" onClick={async () => { try { await navigator.clipboard.writeText(text); setDone(true); setTimeout(() => setDone(false), 2000); } catch { /* ignore */ } }}>
-      {done ? 'Copied ✓' : 'Copy result'}
+      {done ? 'Copied' : 'Copy result'}
     </button>
   );
 }
 
 /** Small sticky result bar for phones, so the answer stays visible while you change inputs. */
-export function MobileBar({ label, value }: { label: string; value: ReactNode }) {
-  return <div className="mbar" aria-hidden="true"><span>{label}</span><b>{value}</b></div>;
+export function MobileBar({ label, value, people }: { label: string; value: ReactNode; people?: number }) {
+  return <div className="mbar" aria-hidden="true">{people !== undefined && <span className="lid">{people}</span>}<span>{label}</span><b>{value}</b></div>;
 }

@@ -15,21 +15,21 @@ const faq = [
   { q: 'What is a rice-cooker cup?', a: 'The small cup that comes with most rice cookers holds 180 ml, not 240 ml. It holds about 150 g of rice. The calculator shows your amount in rice-cooker cups too.' },
 ];
 ---
-<Base title="Rice Calculator: How Much Rice Per Person" description="Free rice calculator. Enter the number of guests and get uncooked rice in cups and grams, water, cooked yield and pot size. Works for white, basmati, jasmine, brown and sushi rice." jsonld={[appLd('Rice calculator', '/rice-calculator/', 'How much rice per person for any number of people.'), faqLd(faq)]}>
+<Base title="Rice Calculator: How Much Rice Per Person (Cups and Grams)" description="Free rice calculator. Enter the number of guests and get uncooked rice in cups and grams, water, cooked yield and pot size. Works for white, basmati, jasmine, brown and sushi rice." jsonld={[appLd('Rice calculator', '/rice-calculator/', 'How much rice per person for any number of people.'), faqLd(faq)]}>
   <section class="hero">
     <h1>Rice calculator</h1>
     <p>How much rice to cook for your guests, with the water, the pot size and the cook time.</p>
+    <p class="answer">Cook <b>¼ cup (50 g) uncooked rice per person</b> for a side dish and <b>½ cup (85 g) per person</b> when rice is the main part of the meal.</p>
   </section>
   <RiceCalculator client:load />
-  <AdSlot slot="" />
+  <AdSlot />
   <section class="section prose">
-    <h2>Rice per person: the quick answer</h2>
-    <p class="answer">Cook <b>¼ cup (50 g) uncooked rice per person</b> for a side dish and <b>½ cup (85 g) per person</b> when rice is the main part of the meal.</p>
+    <h2>Why one number is not enough</h2>
     <p>Most guides give one number. That number is wrong half the time, because the amount depends on how you serve the rice. Next to three other dishes at a party, people take a small spoonful. With a curry or a stir-fry, rice is most of the plate.</p>
   </section>
   <section class="section">
     <h2>Rice for a crowd: chart</h2>
-    <p class="muted" style="margin:8px 0 16px">Long-grain white rice, uncooked, normal appetite, adults.</p>
+    <p class="lede">Long-grain white rice, uncooked, normal appetite, adults.</p>
     <div class="table-wrap"><table class="table">
       <thead><tr><th>People</th><th class="n">Side dish (cups)</th><th class="n">Side dish (weight)</th><th class="n">Main (cups)</th><th class="n">Main (weight)</th></tr></thead>
       <tbody>{rows.map(({ n, side, main }) => (
@@ -39,7 +39,7 @@ const faq = [
   </section>
   <section class="section">
     <h2>By type of rice</h2>
-    <ul class="links" style="margin-top:12px">{RICE_TYPE_PAGES.map((p) => <li><a href={`/rice/${p.slug}/`}>{p.name[0].toUpperCase() + p.name.slice(1)} per person</a></li>)}
+    <ul class="links">{RICE_TYPE_PAGES.map((p) => <li><a href={`/rice/${p.slug}/`}>{p.name[0].toUpperCase() + p.name.slice(1)} per person</a></li>)}
       <li><a href="/rice-to-water-ratio/">Rice to water ratio</a></li><li><a href="/uncooked-to-cooked-rice/">Uncooked to cooked rice</a></li></ul>
   </section>
   <Faq items={faq} />

@@ -1,0 +1,12 @@
+---
+import { TOOLS } from '../config';
+const c = { rice: 'var(--rice)', water: 'var(--water)', pasta: 'var(--pasta)', meat: 'var(--meat)' };
+---
+<ul class="toolrows">
+  {TOOLS.map((t) => (
+    <li><a href={t.href}>
+      <span class="tag" style={`--c:${c[t.tool]};${t.tool === 'pasta' ? '--on-c:var(--ink)' : ''}`}>{t.tag}</span>
+      <h3>{t.name}</h3><p>{t.blurb}</p><svg class="go" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+    </a></li>
+  ))}
+</ul>

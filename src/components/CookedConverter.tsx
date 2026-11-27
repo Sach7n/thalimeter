@@ -30,9 +30,9 @@ export default function CookedConverter() {
         <p className="result-big">{toCooked ? cupsText(c.cookedCups) : cupsText(c.dryCups)}</p>
         <p className="result-sub">{toCooked ? `${gramsText(c.cookedG)} of cooked rice` : `${gramsText(c.dryG)} of uncooked rice`}</p>
         <div className="stats">
-          <Stat icon="📏" label="Volume" main={`× ${RICE[type].yieldVol}`} sub="cooked cups per uncooked cup" />
-          <Stat icon="⚖" label="Weight" main={`× ${RICE[type].yieldWt}`} sub="cooked grams per uncooked gram" />
-          <Stat icon="👥" label="Servings" main={`${Math.max(1, Math.round(c.dryG / 85))}–${Math.max(1, Math.round(c.dryG / 50))}`} sub="as a main – as a side" />
+          <Stat label="Volume" main={`× ${RICE[type].yieldVol}`} sub="cooked cups per uncooked cup" />
+          <Stat label="Weight" main={`× ${RICE[type].yieldWt}`} sub="cooked grams per uncooked gram" />
+          <Stat label="Servings" main={`${Math.max(1, Math.round(c.dryG / 85))}–${Math.max(1, Math.round(c.dryG / 50))}`} sub="as a main – as a side" />
         </div>
         <p className="result-note">Rice takes in water as it cooks, so it gets heavier and bigger. Weight grows less than volume because cooked grains are less tightly packed.</p>
       </div>

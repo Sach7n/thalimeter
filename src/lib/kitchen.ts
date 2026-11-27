@@ -23,6 +23,8 @@ export function cupsText(cups: number): string {
   const num = whole === 0 ? f : `${whole}${f ? ' ' + f : ''}`;
   return `${num} ${v <= 1 ? 'cup' : 'cups'}`;
 }
+/** Compact cups number for titles: "1¾", "12½" (same rounding as cupsText, no unit). */
+export const cupsNum = (cups: number): string => cupsText(cups).replace(/ cups?$/, '').replace(' ', '');
 export function gramsText(g: number): string {
   if (g >= 1000) return `${(round(g, 50) / 1000).toFixed(g >= 10000 ? 1 : 2).replace(/\.?0+$/, '')} kg`;
   return `${round(g, g >= 200 ? 10 : 5)} g`;

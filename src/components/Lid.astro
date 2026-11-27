@@ -1,0 +1,6 @@
+---
+// The painted lid mark: a headcount (or short code) on a steel-rimmed plate.
+interface Props { n: string | number; size?: 'md' | 'lg'; label?: string }
+const { n, size = 'md', label } = Astro.props;
+---
+<span class={`lid${size === 'lg' ? ' lg' : ''}`} role={label ? 'img' : undefined} aria-label={label}>{n}</span>

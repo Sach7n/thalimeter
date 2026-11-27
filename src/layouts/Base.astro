@@ -1,12 +1,21 @@
 ---
 import '../styles/global.css';
-import { site, TOOLS } from '../config';
+import { site, TOOLS, toolFor } from '../config';
+import { RICE_COUNTS } from '../lib/presets';
 interface Props { title: string; description: string; noindex?: boolean; jsonld?: object | object[] }
 const { title, description, noindex = false, jsonld } = Astro.props;
 const path = Astro.url.pathname;
 const canonical = new URL(path, site.url).href;
-const fullTitle = title === site.name ? `${site.name} · Rice, pasta and meat calculators` : `${title} | ${site.name}`;
+// Long, answer-bearing titles drop the brand suffix so Google shows the answer, not the name.
+const fullTitle = title.length > 44 ? title : `${title} | ${site.name}`;
 const year = new Date().getFullYear();
+const nav = [
+  { href: '/rice-calculator/', label: 'Rice', cls: 'n-rice', on: path.startsWith('/rice-calculator') || path.startsWith('/rice/') || path.startsWith('/uncooked') },
+  { href: '/rice-to-water-ratio/', label: 'Water ratio', cls: 'n-water', on: path.startsWith('/rice-to-water') },
+  { href: '/pasta-calculator/', label: 'Pasta', cls: 'n-pasta', on: path.startsWith('/pasta') },
+  { href: '/meat-per-person-calculator/', label: 'Meat', cls: 'n-meat', on: path.startsWith('/meat') },
+];
+const footerRice = [4, 6, 8, 10, 12, 20, 50, 100].filter((n) => RICE_COUNTS.includes(n));
 ---
 <!doctype html>
 <html lang="en">
@@ -19,30 +28,30 @@ const year = new Date().getFullYear();
   {noindex && <meta name="robots" content="noindex" />}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#161210" media="(prefers-color-scheme: dark)" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#16191b" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content={site.name} />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
   <meta property="og:image" content={new URL('/og-default.png', site.url).href} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="ThaliMeter: cook the right amount of rice, water, pasta and meat." />
   <meta name="twitter:card" content="summary_large_image" />
   {jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />}
   {site.adsenseClient && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsenseClient}`} crossorigin="anonymous"></script>}
 </head>
-<body>
+<body data-tool={toolFor(path)}>
   <header class="site-header">
     <div class="wrap">
       <a class="logo" href="/" aria-label="ThaliMeter home">
-        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 19h30a15 15 0 0 1-30 0z" fill="#c2410c"/><path d="M8 19h24" stroke="#9a3412" stroke-width="2" stroke-linecap="round"/><path d="M15 14c-2-2.5 2-4.5 0-7M20 14c-2-2.5 2-4.5 0-7M25 14c-2-2.5 2-4.5 0-7" stroke="#15803d" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="35.5" rx="7" ry="1.6" fill="#c2410c" opacity=".35"/></svg>
-        <span>Thali<b>Meter</b></span>
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#dfe3e2" stroke="#16191b" stroke-width="5"/><circle cx="32" cy="32" r="20.5" fill="#fff"/><path d="M20.5 37A12.5 12.5 0 1 1 43.5 37" fill="none" stroke="#d7261e" stroke-width="6.5" stroke-linecap="round"/><path d="M32 33.5 39.5 24.5" stroke="#16191b" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="33.5" r="3.6" fill="#16191b"/><circle cx="25.5" cy="45" r="2.6" fill="#2443b8"/><circle cx="32" cy="46.5" r="2.6" fill="#f2b705"/><circle cx="38.5" cy="45" r="2.6" fill="#1f8a4c"/></svg>
+        <span>ThaliMeter</span>
       </a>
-      <nav class="nav" aria-label="Main">
-        <a href="/rice-calculator/" aria-current={path.startsWith('/rice-calculator') || path.startsWith('/rice/') ? 'page' : undefined}>Rice</a>
-        <a href="/rice-to-water-ratio/" aria-current={path.startsWith('/rice-to-water') ? 'page' : undefined}>Water ratio</a>
-        <a href="/pasta-calculator/" aria-current={path.startsWith('/pasta') ? 'page' : undefined}>Pasta</a>
-        <a href="/meat-per-person-calculator/" aria-current={path.startsWith('/meat') ? 'page' : undefined}>Meat</a>
+      <nav class="nav" aria-label="Calculators">
+        {nav.map((n) => <a class={n.cls} href={n.href} aria-current={n.on ? 'page' : undefined}>{n.label}</a>)}
       </nav>
     </div>
   </header>
@@ -53,8 +62,8 @@ const year = new Date().getFullYear();
     <div class="wrap">
       <div class="footer-grid">
         <div><h4>Calculators</h4><ul>{TOOLS.map((t) => <li><a href={t.href}>{t.name}</a></li>)}</ul></div>
-        <div><h4>Rice for a crowd</h4><ul>{[10, 20, 50, 100].map((n) => <li><a href={`/rice/for-${n}-people/`}>Rice for {n} people</a></li>)}</ul></div>
-        <div><h4>Pasta for a crowd</h4><ul>{[10, 20, 50, 100].map((n) => <li><a href={`/pasta/for-${n}-people/`}>Pasta for {n} people</a></li>)}</ul></div>
+        <div><h4>Rice for</h4><ul>{footerRice.map((n) => <li><a href={`/rice/for-${n}-people/`}>{n} people</a></li>)}</ul></div>
+        <div><h4>Pasta for</h4><ul>{[4, 10, 20, 50, 100].map((n) => <li><a href={`/pasta/for-${n}-people/`}>{n} people</a></li>)}</ul></div>
         <div><h4>ThaliMeter</h4><ul><li><a href="/about/">About</a></li><li><a href="/how-we-calculate/">How we calculate</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="/contact/">Contact</a></li></ul></div>
       </div>
       <p class="fineprint">All amounts are planning estimates. Appetites, recipes and packaging vary. © {year} {site.operator}.</p>

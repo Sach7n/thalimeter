@@ -33,9 +33,9 @@ export default function RiceWaterCalculator({ preset = {} }: { preset?: { type?:
         <p className="result-big">{us ? cupsText(r.waterCups) : litresText(r.waterMl)}</p>
         <p className="result-sub">Ratio <b>{t.water[method]} : 1</b> (water : rice, by volume) · {us ? litresText(r.waterMl) : cupsText(r.waterCups)}</p>
         <div className="stats">
-          <Stat icon="🍚" label="You will get" main={us ? cupsText(r.cookedCups) : gramsText(r.cookedG)} sub="cooked rice" />
-          <Stat icon="⏱" label="Cook time" main={r.minutes ? `${r.minutes} min` : 'Cooker setting'} sub={method === 'instantpot' ? '+ 10 min natural release' : method === 'stovetop' ? 'then rest 10 min, lid on' : 'use the white or brown rice setting'} />
-          <Stat icon="👥" label="Serves about" main={`${Math.max(1, Math.round(dryG / 85))}–${Math.max(1, Math.round(dryG / 50))}`} sub="as a main – as a side" />
+          <Stat label="You will get" main={us ? cupsText(r.cookedCups) : gramsText(r.cookedG)} sub="cooked rice" />
+          <Stat label="Cook time" main={r.minutes ? `${r.minutes} min` : 'Cooker setting'} sub={method === 'instantpot' ? '+ 10 min natural release' : method === 'stovetop' ? 'then rest 10 min, lid on' : 'use the white or brown rice setting'} />
+          <Stat label="Serves about" main={`${Math.max(1, Math.round(dryG / 85))}–${Math.max(1, Math.round(dryG / 50))}`} sub="as a main – as a side" />
         </div>
         <p className="result-note">{t.tip} {method === 'cooker' ? 'Rice cookers lose very little water, so they need less than a pot.' : method === 'instantpot' ? 'Never fill an Instant Pot above the half line with rice.' : 'Bring to a boil, cover, turn the heat to low and do not lift the lid.'}</p>
       </div>

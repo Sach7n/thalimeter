@@ -1,34 +1,46 @@
 ---
 import Base from '../layouts/Base.astro';
 import RiceCalculator from '../components/RiceCalculator';
-import { site, TOOLS } from '../config';
+import Lid from '../components/Lid.astro';
+import ToolRows from '../components/ToolRows.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { site } from '../config';
 import { RICE_COUNTS, PASTA_COUNTS } from '../lib/presets';
 import { MEAT_PAGES } from '../lib/meat-pages';
-const ld = { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url, description: 'Free kitchen calculators for rice, pasta and meat.' };
+const ld = { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: site.url, description: 'Free calculators for how much rice, pasta and meat to cook per person.' };
 ---
-<Base title={site.name} description="Cook the right amount. Free calculators for how much rice, pasta and meat per person, rice to water ratios and uncooked to cooked rice." jsonld={ld}>
+<Base title="ThaliMeter: How Much Rice, Pasta and Meat to Cook for Any Crowd" description="How much rice per person? ¼ cup (50 g) uncooked as a side, ½ cup (85 g) as a main. Free calculators for rice, rice-to-water ratio, pasta and meat, in cups and grams." jsonld={ld}>
   <section class="hero">
     <h1>Cook the right amount.</h1>
-    <p>No more half-empty pots or mountains of leftovers. Tell us who is coming, and get the exact amount of rice, pasta or meat to cook.</p>
+    <div class="answer">
+      <Lid n={1} size="lg" label="per person" />
+      <div class="answer-figs">
+        <div class="fig"><span class="fig-label">Rice per person, as a side</span><span class="fig-main">¼ cup</span><span class="fig-sub">50 g uncooked · makes ¾ cup cooked</span></div>
+        <div class="fig"><span class="fig-label">Rice per person, as the main</span><span class="fig-main">½ cup</span><span class="fig-sub">85 g uncooked · makes 1½ cups cooked</span></div>
+      </div>
+    </div>
   </section>
-  <RiceCalculator client:load />
+  <section aria-labelledby="pick">
+    <h2 id="pick" class="visually-hidden">Rice for a number of people</h2>
+    <ul class="lids">{RICE_COUNTS.filter((n) => n <= 50).map((n) => <li><a href={`/rice/for-${n}-people/`}><Lid n={n} /><span>people</span></a></li>)}</ul>
+  </section>
+  <section class="section">
+    <h2>Your exact crowd</h2>
+    <p class="lede">Adults, children, how the rice is served and how you cook it. The answer updates as you go.</p>
+    <RiceCalculator client:load />
+  </section>
   <section class="section">
     <h2>All calculators</h2>
-    <ul class="tools" style="margin-top:16px">
-      {TOOLS.map((t) => <li><a class="tool-card" href={t.href}><span class="ic" aria-hidden="true">{t.icon}</span><h3>{t.name}</h3><p>{t.blurb}</p></a></li>)}
-    </ul>
+    <ToolRows />
   </section>
-  <section class="section">
-    <h2>Rice for a crowd</h2>
-    <ul class="links" style="margin-top:12px">{RICE_COUNTS.map((n) => <li><a href={`/rice/for-${n}-people/`}>Rice for {n}</a></li>)}</ul>
-  </section>
+  <AdSlot />
   <section class="section">
     <h2>Pasta for a crowd</h2>
-    <ul class="links" style="margin-top:12px">{PASTA_COUNTS.map((n) => <li><a href={`/pasta/for-${n}-people/`}>Pasta for {n}</a></li>)}</ul>
+    <ul class="lids" data-tool="pasta">{PASTA_COUNTS.map((n) => <li><a href={`/pasta/for-${n}-people/`}><Lid n={n} /><span>people</span></a></li>)}</ul>
   </section>
   <section class="section">
     <h2>Meat for parties</h2>
-    <ul class="links" style="margin-top:12px">{MEAT_PAGES.map((p) => <li><a href={`/meat/${p.slug}/`}>{p.h1}</a></li>)}</ul>
+    <ul class="links" data-tool="meat">{MEAT_PAGES.map((p) => <li><a href={`/meat/${p.slug}/`}>{p.h1}</a></li>)}</ul>
   </section>
   <section class="section prose">
     <h2>Why ThaliMeter</h2>

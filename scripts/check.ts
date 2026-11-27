@@ -20,6 +20,7 @@ for (const [k, t] of Object.entries(K.RICE)) {
   ok(t.water.stovetop >= t.water.cooker && t.water.cooker >= t.water.instantpot, `${k}: stovetop ≥ cooker ≥ IP water`);
   ok(t.yieldVol >= 2 && t.yieldVol <= 3.5 && t.yieldWt >= 2 && t.yieldWt <= 3.2, `${k}: yields in range`);
 }
+ok(K.cupsNum(1.7) === '1¾' && K.cupsNum(12.4) === '12½' && K.cupsNum(0.5) === '½', `cupsNum ${K.cupsNum(1.7)} ${K.cupsNum(12.4)}`);
 // Converter round trip
 const c = K.convertRice(1, 'cups', 'toCooked', 'white');
 const back = K.convertRice(c.cookedCups, 'cups', 'toDry', 'white');
