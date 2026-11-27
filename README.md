@@ -14,6 +14,9 @@ Free kitchen calculators at https://thalimeter.com. Astro 7 (static) + React isl
 
 All maths is in `src/lib/kitchen.ts` (no imports, tested by `scripts/check.ts`). Every assumption is listed on `/how-we-calculate/`.
 
+## Languages
+English at the root; Spanish, Italian, French, Greek, Arabic (right-to-left), Turkish and Chinese under `/es/`, `/it/`, `/fr/`, `/el/`, `/ar/`, `/tr/`, `/zh/`. Every word lives in `src/i18n/<lang>.ts`, shaped exactly like `en.ts`; `npm run check` fails if a language is missing a key or a {placeholder}. Pages read their language from the URL; `src/pages/[lang]/` only re-renders the English page files. To change copy, edit `en.ts` and the same key in each language.
+
 ## Commands
 ```
 npm install
