@@ -1,9 +1,11 @@
 import type { MeatType } from './kitchen';
-export const MEAT_PAGES: { slug: string; type: MeatType; h1: string; title: string; intro: string; tips: string[] }[] = [
-  { slug: 'bbq', type: 'boneless', h1: 'How much meat per person for a BBQ', title: 'How Much Meat Per Person for a BBQ (Calculator)', intro: 'For a BBQ, plan about ½ lb (225 g) of raw meat per adult across all the meats. If you serve two or three meats, divide that amount between them.', tips: ['Plan more meat for a long party that goes into the evening.', 'Sausages: about 1½ per adult when there are other meats.', 'Buy 10% extra if the grill is the only food.'] },
-  { slug: 'tacos', type: 'ground', h1: 'How much taco meat per person', title: 'How Much Taco Meat Per Person (Calculator)', intro: 'For tacos, plan about ¼ lb (115 g) of raw ground meat per adult. That fills 2–3 tacos with the usual toppings.', tips: ['1 lb of ground beef fills 8–10 hard or small soft tacos.', 'For a taco bar with lots of toppings, use the buffet option.', 'Shredded chicken: use the same amount of cooked meat.'] },
-  { slug: 'turkey', type: 'turkey', h1: 'How much turkey per person', title: 'How Much Turkey Per Person (Turkey Size Calculator)', intro: 'Plan about 1¼ lb (565 g) of whole raw turkey per person. This allows for the bones and gives a few leftovers.', tips: ['Thaw a frozen turkey in the fridge: 1 day for each 4–5 lb (2 kg).', 'A boneless turkey breast needs only ½ lb (225 g) per person.', 'For lots of leftovers, select “Extra for seconds”.'] },
-  { slug: 'pulled-pork', type: 'porkShoulder', h1: 'How much pulled pork per person', title: 'How Much Pulled Pork Per Person (Calculator)', intro: 'Plan about ¾ lb (360 g) of raw pork shoulder per person. Pork shoulder loses about half of its weight when you smoke or braise it.', tips: ['1 lb of raw pork shoulder makes about 3 sandwiches.', 'For sliders, reduce the amount by about a quarter.', 'Cook it a day early: pulled pork reheats well.'] },
-  { slug: 'brisket', type: 'brisket', h1: 'How much brisket per person', title: 'How Much Brisket Per Person (Calculator)', intro: 'Plan about ¾ lb (360 g) of raw, untrimmed brisket per person. A whole packer brisket loses about half its weight after trimming and smoking.', tips: ['A 12 lb packer brisket feeds about 15 people.', 'Rest a smoked brisket for at least 1 hour before you slice it.', 'Slice against the grain.'] },
-  { slug: 'burgers', type: 'burgers', h1: 'How many burgers per person', title: 'How Many Burgers Per Person (Calculator)', intro: 'Plan 1½ patties of ⅓ lb (150 g) per adult. That is about ½ lb (225 g) of raw ground beef per adult.', tips: ['1 lb of ground beef makes 3 patties of ⅓ lb.', 'Buy buns in packs of 8: count patties, then round up.', 'Kids usually eat 1 small patty.'] },
+/** Occasion pages; their text lives in the dictionaries under meatOcc.pages[slug]. */
+export const MEAT_PAGES: { slug: 'bbq' | 'tacos' | 'turkey' | 'pulled-pork' | 'brisket' | 'burgers'; type: MeatType }[] = [
+  { slug: 'bbq', type: 'boneless' },
+  { slug: 'tacos', type: 'ground' },
+  { slug: 'turkey', type: 'turkey' },
+  { slug: 'pulled-pork', type: 'porkShoulder' },
+  { slug: 'brisket', type: 'brisket' },
+  { slug: 'burgers', type: 'burgers' },
 ];
+export const meatSlugPaths = () => MEAT_PAGES.map((p) => ({ params: { slug: p.slug }, props: { p } }));

@@ -4,49 +4,55 @@ import PastaCalculator from '../../components/PastaCalculator';
 import Faq from '../../components/Faq.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import Lid from '../../components/Lid.astro';
-import { pasta, PASTA, PASTA_DEFAULT, gramsText, lbText, litresText, quartsText, round, type PastaType } from '../../lib/kitchen';
-import { PASTA_COUNTS } from '../../lib/presets';
+import { pasta, PASTA, PASTA_DEFAULT, round, type PastaType } from '../../lib/kitchen';
+import { PASTA_COUNTS, pastaSlugPaths } from '../../lib/presets';
 import { faqLd, appLd, crumbLd } from '../../lib/seo';
-export function getStaticPaths() { return PASTA_COUNTS.map((n) => ({ params: { slug: `for-${n}-people` }, props: { n } })); }
+import { i18n, islandT, tpl } from '../../i18n';
+export function getStaticPaths() { return pastaSlugPaths(); }
 const { n } = Astro.props as { n: number };
+const { lang, d, f, h } = i18n(Astro.url.pathname);
+const c = d.pastaN;
 const m = pasta({ ...PASTA_DEFAULT, adults: n }), s = pasta({ ...PASTA_DEFAULT, adults: n, meal: 'side' });
-const description = `Pasta for ${n} people: ${gramsText(m.g)} (${lbText(m.g)}) dry pasta as a main, about ${Math.ceil(m.boxes16oz)} boxes of 1 lb. Plus water, salt and sauce.`;
+const salt = f.n(round(m.saltTsp, 0.5)), jars = f.n(round(m.sauceJars24oz, 0.5));
+const v = {
+  n, g: f.g(m.g), lb: f.lb(m.g), boxes: f.n(round(m.boxes16oz, 0.25)), boxesUp: Math.ceil(m.boxes16oz), packs: f.n(round(m.packs500g, 0.25)),
+  sauce: f.g(m.sauceG), jars, salt,
+  water: m.waterL > 8 ? tpl(c.waterBig, { l: f.l(m.waterL * 1000) }) : tpl(c.waterOk, { l: f.l(m.waterL * 1000), qt: f.qt(m.waterL * 1000), salt }),
+};
+const description = tpl(c.description, { ...v, boxes: Math.ceil(m.boxes16oz) });
 const types = Object.keys(PASTA) as PastaType[];
-const faq = [
-  { q: `How many boxes of pasta for ${n} people?`, a: `About ${round(m.boxes16oz, 0.25)} boxes of 1 lb for a main course. Buy ${Math.ceil(m.boxes16oz)} boxes.` },
-  { q: `How much sauce for ${n} people?`, a: `About ${gramsText(m.sauceG)} of tomato sauce, or ${round(m.sauceJars24oz, 0.5)} jars of 24 oz (680 g).` },
-  { q: `How much water to cook pasta for ${n} people?`, a: m.waterL > 8 ? `About ${litresText(m.waterL * 1000)}. That is too much for one pot: cook the pasta in 2 or more batches, with about 1 L of water per 100 g.` : `About ${litresText(m.waterL * 1000)} (${quartsText(m.waterL * 1000)}), with ${round(m.saltTsp, 0.5)} teaspoons of salt.` },
-];
+const faq = c.faq.map((x) => ({ q: tpl(x.q, v), a: tpl(x.a, v) }));
 const path = Astro.url.pathname;
+const crumb = tpl(c.crumb, v);
 ---
-<Base title={`How Much Pasta for ${n} People? ${gramsText(m.g)} (${lbText(m.g)}) Dry`} description={description} jsonld={[appLd('Pasta calculator', path, description), faqLd(faq), crumbLd([['Home', '/'], ['Pasta calculator', '/pasta-calculator/'], [`Pasta for ${n} people`, path]])]}>
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/pasta-calculator/">Pasta calculator</a> › Pasta for {n} people</nav>
+<Base title={tpl(c.title, v)} description={description} jsonld={[appLd(d.pasta.appName, path, description), faqLd(faq), crumbLd([[d.site.home, h('/')], [d.pasta.appName, h('/pasta-calculator/')], [crumb, path]])]}>
+  <nav class="crumbs" aria-label={d.site.crumbAria}><a href={h('/')}>{d.site.home}</a> › <a href={h('/pasta-calculator/')}>{d.pasta.appName}</a> › {crumb}</nav>
   <section class="hero">
-    <h1>How much pasta for {n} people?</h1>
+    <h1>{tpl(c.h1, v)}</h1>
     <div class="answer">
-      <Lid n={n} size="lg" label={`${n} people`} />
+      <Lid n={n} size="lg" label={tpl(d.site.footPeople, { n })} />
       <div class="answer-figs">
-        <div class="fig"><span class="fig-label">As a main course</span><span class="fig-main">{gramsText(m.g)}</span><span class="fig-sub">{lbText(m.g)} dry · {round(m.boxes16oz, 0.25)} × 1 lb box · {round(m.packs500g, 0.25)} × 500 g pack</span></div>
-        <div class="fig"><span class="fig-label">As a side or starter</span><span class="fig-main">{gramsText(s.g)}</span><span class="fig-sub">{lbText(s.g)} dry</span></div>
+        <div class="fig"><span class="fig-label">{c.main}</span><span class="fig-main">{f.g(m.g)}</span><span class="fig-sub">{tpl(c.mainSub, v)}</span></div>
+        <div class="fig"><span class="fig-label">{c.side}</span><span class="fig-main">{f.g(s.g)}</span><span class="fig-sub">{tpl(c.sideSub, { lb: f.lb(s.g) })}</span></div>
       </div>
     </div>
-    <p class="answer-note">Boil it in about {litresText(m.waterL * 1000)} of water with {round(m.saltTsp, 0.5)} tsp of salt{m.waterL > 8 ? ', in two or more batches' : ''}. Sauce: about {gramsText(m.sauceG)}, or {round(m.sauceJars24oz, 0.5)} jars of 24 oz.</p>
+    <p class="answer-note">{tpl(c.note, { water: f.l(m.waterL * 1000), salt, batches: m.waterL > 8 ? c.noteBatches : '', sauce: f.g(m.sauceG), jars })}</p>
   </section>
   <section>
     <div class="table-wrap"><table class="table">
-      <thead><tr><th>Pasta (main course)</th><th class="n">Weight</th><th class="n">Cooked</th></tr></thead>
-      <tbody>{types.map((t) => { const r = pasta({ ...PASTA_DEFAULT, adults: n, type: t }); return <tr><td>{PASTA[t].label}</td><td class="n">{gramsText(r.g)} · {lbText(r.g)}</td><td class="n">{gramsText(r.cookedG)}</td></tr>; })}</tbody>
+      <thead><tr><th>{c.thPasta}</th><th class="n">{c.thWeight}</th><th class="n">{c.thCooked}</th></tr></thead>
+      <tbody>{types.map((t) => { const r = pasta({ ...PASTA_DEFAULT, adults: n, type: t }); return <tr><td>{d.k.pasta[t].label}</td><td class="n">{f.g(r.g)} · {f.lb(r.g)}</td><td class="n">{f.g(r.cookedG)}</td></tr>; })}</tbody>
     </table></div>
   </section>
   <section class="section">
-    <h2>Change the numbers</h2>
-    <p class="lede">Add children, change the pasta, or plan for a buffet.</p>
-    <PastaCalculator client:visible preset={{ adults: n }} />
+    <h2>{d.site.changeNumbers}</h2>
+    <p class="lede">{c.changeLede}</p>
+    <PastaCalculator client:visible preset={{ adults: n }} t={islandT(lang)} />
   </section>
   <AdSlot />
   <Faq items={faq} />
   <section class="section">
-    <h2>Pasta for more people</h2>
-    <ul class="lids">{PASTA_COUNTS.map((c) => <li><a href={`/pasta/for-${c}-people/`} aria-current={c === n ? 'page' : undefined}><Lid n={c} /><span>people</span></a></li>)}</ul>
+    <h2>{c.more}</h2>
+    <ul class="lids">{PASTA_COUNTS.map((k) => <li><a href={h(`/pasta/for-${k}-people/`)} aria-current={k === n ? 'page' : undefined}><Lid n={k} /><span>{d.site.people}</span></a></li>)}</ul>
   </section>
 </Base>

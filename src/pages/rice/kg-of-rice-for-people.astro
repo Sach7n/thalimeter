@@ -1,20 +1,24 @@
 ---
 import Guide from '../../components/Guide.astro';
-import { RICE_MEAL, gramsText, lbText } from '../../lib/kitchen';
+import { RICE_MEAL } from '../../lib/kitchen';
 import { RICE_COUNTS } from '../../lib/presets';
+import { i18n, tpl } from '../../i18n';
+const { d, f, h } = i18n(Astro.url.pathname);
+const t = d.guide.kg;
 const { side, main, ricedish } = RICE_MEAL;
 const counts = [5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200, 300, 500];
 const bags = [1, 2, 5, 6, 8, 10, 12, 20, 25, 50];
+const row = (n: number) => tpl(t.rowPeople, { n });
 ---
-<Guide slug="/rice/kg-of-rice-for-people/" tool={{ href: '/rice-calculator/', name: 'rice calculator' }}>
+<Guide slug="/rice/kg-of-rice-for-people/">
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>People</th><th class="n">As a side</th><th class="n">As the main</th><th class="n">Biryani or pulao</th></tr></thead>
-    <tbody>{counts.map((n) => <tr><td>{RICE_COUNTS.includes(n) ? <a href={`/rice/for-${n}-people/`}>{n} people</a> : `${n} people`}</td><td class="n">{gramsText(n * side.g)}</td><td class="n">{gramsText(n * main.g)}</td><td class="n">{gramsText(n * ricedish.g)}</td></tr>)}</tbody>
+    <thead><tr><th>{t.thPeople}</th><th class="n">{t.thSide}</th><th class="n">{t.thMain}</th><th class="n">{t.thDish}</th></tr></thead>
+    <tbody>{counts.map((n) => <tr><td>{RICE_COUNTS.includes(n) ? <a href={h(`/rice/for-${n}-people/`)}>{row(n)}</a> : row(n)}</td><td class="n">{f.g(n * side.g)}</td><td class="n">{f.g(n * main.g)}</td><td class="n">{f.g(n * ricedish.g)}</td></tr>)}</tbody>
   </table></div>
-  <p class="table-note">Uncooked rice, adults, normal appetite. A child under 12 counts as half. For a buffet with many dishes, use about three quarters.</p>
-  <h2 class="section">How many people a bag of rice feeds</h2>
+  <p class="table-note">{t.note}</p>
+  <h2 class="section">{t.bagsH}</h2>
   <div class="table-wrap" style="margin-top:18px"><table class="table">
-    <thead><tr><th>Uncooked rice</th><th class="n">As the main</th><th class="n">Biryani or pulao</th><th class="n">As a side</th></tr></thead>
-    <tbody>{bags.map((k) => <tr><td>{k} kg <span class="muted">({lbText(k * 1000)})</span></td><td class="n">{Math.floor(k * 1000 / main.g)} people</td><td class="n">{Math.floor(k * 1000 / ricedish.g)} people</td><td class="n">{Math.floor(k * 1000 / side.g)} people</td></tr>)}</tbody>
+    <thead><tr><th>{t.thBag}</th><th class="n">{t.thMain}</th><th class="n">{t.thDish}</th><th class="n">{t.thSide}</th></tr></thead>
+    <tbody>{bags.map((k) => <tr><td>{k} kg <span class="muted">({f.lb(k * 1000)})</span></td><td class="n">{tpl(t.feeds, { n: Math.floor(k * 1000 / main.g) })}</td><td class="n">{tpl(t.feeds, { n: Math.floor(k * 1000 / ricedish.g) })}</td><td class="n">{tpl(t.feeds, { n: Math.floor(k * 1000 / side.g) })}</td></tr>)}</tbody>
   </table></div>
 </Guide>

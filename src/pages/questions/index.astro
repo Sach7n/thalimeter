@@ -1,22 +1,25 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { GUIDES } from '../../lib/questions';
+import { GUIDES, guideVars } from '../../lib/questions';
 import { faqLd } from '../../lib/seo';
+import { i18n, tpl } from '../../i18n';
+const { d, f, h } = i18n(Astro.url.pathname);
 const groups = ['Rice', 'Pasta', 'Meat'] as const;
-const all = GUIDES.flatMap((g) => g.faq);
+const qa = (key: (typeof GUIDES)[number]['key']) => { const v = guideVars(key, f); return d.guide[key].faq.map((x) => ({ q: tpl(x.q, v), a: tpl(x.a, v) })); };
+const all = GUIDES.flatMap((g) => qa(g.key));
 ---
-<Base title="Cooking for a Crowd: Rice, Pasta and Meat Questions Answered" description="Straight answers to what people ask most: kg of rice for 50 people, how many people a cup of rice feeds, 100 g uncooked rice cooked, 2 oz of pasta, meat per person in kg." jsonld={faqLd(all)}>
+<Base title={d.guide.hubTitle} description={d.guide.hubDesc} jsonld={faqLd(all)}>
   <section class="hero">
-    <h1>Questions people ask</h1>
-    <p>The questions people search most before they cook for a group, answered with the same numbers our calculators use.</p>
+    <h1>{d.guide.hubH1}</h1>
+    <p>{d.guide.hubLede}</p>
   </section>
   {groups.map((grp) => (
     <section class="qa qa-group">
-      <h2>{grp}</h2>
+      <h2>{d.guide.groups[grp]}</h2>
       {GUIDES.filter((g) => g.group === grp).map((g) => (
         <Fragment>
-          {g.faq.map((f) => <div class="qa-item"><h3>{f.q}</h3><p set:html={f.a} /></div>)}
-          <p class="qa-more"><a href={g.slug}>{g.h1.replace(/\?$/, '')}: full chart</a></p>
+          {qa(g.key).map((x) => <div class="qa-item"><h3>{x.q}</h3><p set:html={x.a} /></div>)}
+          <p class="qa-more"><a href={h(g.slug)}>{tpl(d.guide.fullChart, { h: d.guide[g.key].h1.replace(/[?？؟;]$/, '') })}</a></p>
         </Fragment>
       ))}
     </section>

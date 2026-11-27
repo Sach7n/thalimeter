@@ -1,0 +1,7 @@
+---
+// The same page in another language: the page reads its language from the URL.
+import Page from '../../questions/index.astro';
+import { otherLangs } from '../../../i18n';
+export const getStaticPaths = otherLangs;
+---
+<Page />

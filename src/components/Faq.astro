@@ -1,6 +1,8 @@
 ---
+import { i18n } from '../i18n';
 interface Props { items: { q: string; a: string }[]; title?: string }
-const { items, title = 'Questions people ask' } = Astro.props;
+const { d } = i18n(Astro.url.pathname);
+const { items, title = d.site.faqTitle } = Astro.props;
 ---
 <section class="section faq prose">
   <h2>{title}</h2>

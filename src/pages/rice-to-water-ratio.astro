@@ -4,32 +4,24 @@ import RiceWaterCalculator from '../components/RiceWaterCalculator';
 import Faq from '../components/Faq.astro';
 import AdSlot from '../components/AdSlot.astro';
 import { faqLd, appLd } from '../lib/seo';
-const faq = [
-  { q: 'What is the water to rice ratio for white rice?', a: 'On the stove, use <b>1¾ cups of water for 1 cup of long-grain white rice</b>. In a rice cooker, use about 1.2 : 1. In an Instant Pot, use 1 : 1.' },
-  { q: 'Is the 2 to 1 ratio correct?', a: 'For most white rice, 2 cups of water to 1 cup of rice gives soft, slightly wet rice. That ratio comes from old package directions. Rinsed long-grain rice cooked with a tight lid needs only 1½–1¾ cups. Brown rice needs more: 2¼ cups.' },
-  { q: 'Why does a rice cooker need less water?', a: 'A rice cooker has a sealed lid and stops at the right time, so very little water escapes as steam. A pot on the stove loses more water.' },
-  { q: 'Do I add more water for more rice?', a: 'Not in direct proportion on the stove. Evaporation depends on the pot size, not the amount of rice. For 4 cups of rice or more, you can reduce the water by about ¼ cup per extra cup of rice.' },
-  { q: 'What is the ratio for basmati rice?', a: 'Rinse and soak basmati for 20–30 minutes. Then use 1½ cups of water for 1 cup of rice on the stove.' },
-];
+import { i18n, islandT } from '../i18n';
+const { lang, d, h } = i18n(Astro.url.pathname);
+const p = d.water;
 ---
-<Base title="Rice to Water Ratio Calculator (Stove, Rice Cooker, Instant Pot)" description="Get the exact water for white, basmati, jasmine, brown and sushi rice. Enter the amount of rice in cups or grams and choose stovetop, rice cooker or Instant Pot." jsonld={[appLd('Rice to water ratio calculator', '/rice-to-water-ratio/', 'Water for any amount and type of rice.'), faqLd(faq)]}>
+<Base title={p.title} description={p.description} jsonld={[appLd(p.appName, h('/rice-to-water-ratio/'), p.appDesc), faqLd(p.faq)]}>
   <section class="hero">
-    <h1>Rice to water ratio calculator</h1>
-    <p>Enter your rice. Get the exact water for your type of rice and your pot, cooker or Instant Pot.</p>
-    <p class="answer">For 1 cup of rice on the stove: <b>white 1¾ cups</b>, <b>basmati 1½</b>, <b>jasmine 1½</b>, <b>brown 2¼</b>, <b>sushi rice 1¼</b> cups of water.</p>
+    <h1>{p.h1}</h1>
+    <p>{p.lede}</p>
+    <p class="answer" set:html={p.answer} />
   </section>
-  <RiceWaterCalculator client:load />
+  <RiceWaterCalculator client:load t={islandT(lang)} />
   <AdSlot />
   <section class="section prose">
-    <h2>Why one ratio does not fit all rice</h2>
-    <p>Each type of rice takes in a different amount of water. Long, thin grains like basmati need less water than you think. Brown rice keeps its bran layer, so it needs more water and more time.</p>
-    <p>The way you cook also changes the ratio. A pot on the stove loses water as steam. A rice cooker and an Instant Pot are almost sealed, so they need less.</p>
-    <h2>Three rules for fluffy rice</h2>
-    <ol>
-      <li><b>Rinse</b> the rice until the water is almost clear. This removes loose starch that makes rice sticky.</li>
-      <li><b>Do not lift the lid</b> while the rice cooks. The steam does half of the work.</li>
-      <li><b>Rest</b> the rice for 10 minutes with the lid on after you turn off the heat, then fluff it with a fork.</li>
-    </ol>
+    <h2>{p.whyH}</h2>
+    <p>{p.why1}</p>
+    <p>{p.why2}</p>
+    <h2>{p.rulesH}</h2>
+    <ol>{p.rules.map((r) => <li set:html={r} />)}</ol>
   </section>
-  <Faq items={faq} />
+  <Faq items={p.faq} />
 </Base>

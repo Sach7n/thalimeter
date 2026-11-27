@@ -1,10 +1,12 @@
 ---
 import { site } from '../config';
+import { i18n } from '../i18n';
+const { d } = i18n(Astro.url.pathname);
 // Placed only between content sections, never inside a calculator or above the answer.
 ---
 {site.adsenseClient && site.adsenseSlot && (
-  <aside class="ad" aria-label="Advertisement">
-    <span class="ad-label">Advertisement</span>
+  <aside class="ad" aria-label={d.site.ad}>
+    <span class="ad-label">{d.site.ad}</span>
     <ins class="adsbygoogle" style="display:block" data-ad-client={site.adsenseClient} data-ad-slot={site.adsenseSlot} data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </aside>

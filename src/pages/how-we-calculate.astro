@@ -1,32 +1,36 @@
 ---
 import Base from '../layouts/Base.astro';
-import { RICE, RICE_MEAL, PASTA, PASTA_MEAL, MEAT, MEAT_SHARE, APPETITE, RICE_METHOD_LABEL, type RiceType, type RiceMethod, type RiceMeal, type PastaType, type PastaMeal, type MeatType } from '../lib/kitchen';
+import { RICE, RICE_MEAL, PASTA, PASTA_MEAL, MEAT, MEAT_SHARE, APPETITE, RICE_METHOD_LABEL, type RiceType, type RiceMethod, type RiceMeal, type PastaType, type PastaMeal, type MeatType, type MeatShare } from '../lib/kitchen';
+import { i18n, tpl } from '../i18n';
+const { d, f, h } = i18n(Astro.url.pathname);
+const p = d.how, k = d.k;
+const methods = Object.keys(RICE_METHOD_LABEL) as RiceMethod[];
 ---
-<Base title="How We Calculate" description="The portion sizes, water ratios, yields and unit conversions that ThaliMeter uses, and why.">
-  <section class="hero"><h1>How we calculate</h1><p>Every number on ThaliMeter comes from the values on this page. If you think one is wrong, <a href="/contact/">tell us</a>.</p></section>
+<Base title={p.title} description={p.description}>
+  <section class="hero"><h1>{p.h1}</h1><p set:html={tpl(p.lede, { contact: h('/contact/') })} /></section>
   <div class="prose">
-    <h2>People</h2>
-    <ul><li>A child under 12 counts as <b>half an adult</b>.</li><li>Appetite: light × {APPETITE.light}, normal × {APPETITE.normal}, hearty × {APPETITE.hearty}.</li><li>Buffet with many other dishes: × 0.75. Extra for seconds or leftovers: × 1.2.</li></ul>
-    <h2>Rice portions (uncooked, per adult)</h2>
-    <ul>{(Object.keys(RICE_MEAL) as RiceMeal[]).map((k) => <li>{RICE_MEAL[k].label}: <b>{RICE_MEAL[k].g} g</b> — {RICE_MEAL[k].hint}</li>)}</ul>
-    <h2>Rice types</h2>
+    <h2>{p.peopleH}</h2>
+    <ul>{p.people.map((x) => <li set:html={tpl(x, { light: f.n(APPETITE.light), normal: f.n(APPETITE.normal), hearty: f.n(APPETITE.hearty) })} />)}</ul>
+    <h2>{p.riceH}</h2>
+    <ul>{(Object.keys(RICE_MEAL) as RiceMeal[]).map((x) => <li>{k.riceMeal[x].label}: <b>{RICE_MEAL[x].g} g</b> — {k.riceMeal[x].hint}</li>)}</ul>
+    <h2>{p.typesH}</h2>
   </div>
   <div class="table-wrap" style="margin-top:12px"><table class="table">
-    <thead><tr><th>Rice</th><th class="n">g per US cup</th><th class="n">Cooked volume ×</th><th class="n">Cooked weight ×</th>{(Object.keys(RICE_METHOD_LABEL) as RiceMethod[]).map((m) => <th class="n">Water: {RICE_METHOD_LABEL[m]}</th>)}</tr></thead>
-    <tbody>{(Object.keys(RICE) as RiceType[]).map((k) => <tr><td>{RICE[k].label}</td><td class="n">{RICE[k].gPerCup}</td><td class="n">{RICE[k].yieldVol}</td><td class="n">{RICE[k].yieldWt}</td>{(Object.keys(RICE_METHOD_LABEL) as RiceMethod[]).map((m) => <td class="n">{RICE[k].water[m]} : 1</td>)}</tr>)}</tbody>
+    <thead><tr><th>{p.thRice}</th><th class="n">{p.thGCup}</th><th class="n">{p.thVol}</th><th class="n">{p.thWt}</th>{methods.map((m) => <th class="n">{tpl(p.thWater, { method: k.method[m] })}</th>)}</tr></thead>
+    <tbody>{(Object.keys(RICE) as RiceType[]).map((x) => <tr><td>{k.rice[x].label}</td><td class="n">{RICE[x].gPerCup}</td><td class="n">{f.n(RICE[x].yieldVol)}</td><td class="n">{f.n(RICE[x].yieldWt)}</td>{methods.map((m) => <td class="n">{f.n(RICE[x].water[m])} : 1</td>)}</tr>)}</tbody>
   </table></div>
   <div class="prose">
-    <p>Pot size: cooked volume × 1.4 for space, rounded up to a common pot size. Rice-cooker batches: 5.5 cups (small) or 10 cups (large) of uncooked rice in rice-cooker cups of 180 ml.</p>
-    <h2>Pasta</h2>
-    <ul>{(Object.keys(PASTA_MEAL) as PastaMeal[]).map((k) => <li>{PASTA_MEAL[k].label}: <b>{PASTA_MEAL[k].g} g</b> dry per adult</li>)}
-      {(Object.keys(PASTA) as PastaType[]).map((k) => <li>{PASTA[k].label}: weight × {PASTA[k].factor}, cooked weight × {PASTA[k].yieldWt}</li>)}
-      <li>Water: 1 L per 100 g of pasta, at least 3 L. Salt: 7 g per litre. Sauce: 1.5 g per g of dry pasta.</li></ul>
-    <h2>Meat (raw weight per adult, the only main)</h2>
-    <ul>{(Object.keys(MEAT) as MeatType[]).map((k) => <li>{MEAT[k].label}: <b>{MEAT[k].rawG} g</b> — {MEAT[k].cookedNote}</li>)}
-      <li>{Object.values(MEAT_SHARE).map((s) => `${s.label}: × ${s.f}`).join(' · ')}</li></ul>
-    <h2>Units</h2>
-    <ul><li>1 US cup = 236.6 ml. 1 metric cup = 250 ml. 1 rice-cooker cup = 180 ml.</li><li>1 lb = 453.6 g. 1 oz = 28.35 g. 1 US quart = 946 ml.</li></ul>
-    <h2>Sources</h2>
-    <p>We compared the portion guides of food-service and catering suppliers, national dietary guidelines (USDA, NHS) and the directions on rice and pasta packages, and tested the water ratios on a stove, in a rice cooker and in an Instant Pot. Where the sources disagree, we use the middle value.</p>
+    <p>{p.pot}</p>
+    <h2>{p.pastaH}</h2>
+    <ul>{(Object.keys(PASTA_MEAL) as PastaMeal[]).map((x) => <li set:html={tpl(p.pastaMeal, { label: k.pastaMeal[x].label, g: PASTA_MEAL[x].g })} />)}
+      {(Object.keys(PASTA) as PastaType[]).map((x) => <li>{tpl(p.pastaType, { label: k.pasta[x].label, factor: f.n(PASTA[x].factor), yield: f.n(PASTA[x].yieldWt) })}</li>)}
+      <li>{p.pastaRules}</li></ul>
+    <h2>{p.meatH}</h2>
+    <ul>{(Object.keys(MEAT) as MeatType[]).map((x) => <li>{k.meat[x].label}: <b>{MEAT[x].rawG} g</b> — {k.meat[x].cookedNote}</li>)}
+      <li>{(Object.keys(MEAT_SHARE) as MeatShare[]).map((x) => `${k.share[x]}: × ${f.n(MEAT_SHARE[x].f)}`).join(' · ')}</li></ul>
+    <h2>{p.unitsH}</h2>
+    <ul>{p.units.map((x) => <li>{x}</li>)}</ul>
+    <h2>{p.sourcesH}</h2>
+    <p>{p.sources}</p>
   </div>
 </Base>

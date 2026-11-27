@@ -1,45 +1,47 @@
 import { useState } from 'react';
-import { MEAT, MEAT_DEFAULT, MEAT_SHARE, meat, gramsText, lbText, type MeatInput, type MeatType, type MeatShare, type Appetite } from '../lib/kitchen';
-import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid } from './ui';
+import { MEAT, MEAT_DEFAULT, MEAT_SHARE, meat, type MeatInput, type MeatType, type MeatShare, type Appetite } from '../lib/kitchen';
+import { tpl } from '../i18n/fmt';
+import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid, appetiteOptions, fmtOf, type T } from './ui';
 
-export default function MeatCalculator({ preset = {} }: { preset?: Partial<MeatInput> }) {
+export default function MeatCalculator({ preset = {}, t }: { preset?: Partial<MeatInput>; t: T }) {
   const [s, setS] = useState<MeatInput>({ ...MEAT_DEFAULT, ...preset });
   const [units, setUnits] = useUnits();
   const up = (p: Partial<MeatInput>) => setS((x) => ({ ...x, ...p }));
+  const f = fmtOf(t), c = t.calc, cm = c.meat, k = t.k;
   const r = meat(s);
-  const t = MEAT[s.type];
+  const m = k.meat[s.type];
   const us = units === 'us';
-  const summary = `${t.label} for ${s.adults} adults${s.kids ? ` and ${s.kids} children` : ''}: buy ${lbText(r.rawG)} / ${gramsText(r.rawG)} raw. — thalimeter.com`;
+  const people = s.adults + s.kids;
+  const summary = tpl(cm.summary, { type: m.label, adults: s.adults, kids: s.kids ? tpl(c.rice.kids, { n: s.kids }) : '', lb: f.lb(r.rawG), g: f.g(r.rawG) }) + ' — thalimeter.com';
   return (
     <div className="calc">
       <div className="calc-inputs">
         <div className="row-2">
-          <Stepper label="Adults" value={s.adults} onChange={(adults) => up({ adults })} />
-          <Stepper label="Children" hint="(under 12)" value={s.kids} onChange={(kids) => up({ kids })} />
+          <Stepper t={t} label={c.adults} value={s.adults} onChange={(adults) => up({ adults })} />
+          <Stepper t={t} label={c.children} hint={c.under12} value={s.kids} onChange={(kids) => up({ kids })} />
         </div>
-        <Choice<MeatType> label="What meat?" value={s.type} onChange={(type) => up({ type })}
-          options={(Object.keys(MEAT) as MeatType[]).map((k) => ({ v: k, label: MEAT[k].label }))} />
-        <Choice<MeatShare> label="Other mains?" value={s.share} onChange={(share) => up({ share })}
-          options={(Object.keys(MEAT_SHARE) as MeatShare[]).map((k) => ({ v: k, label: MEAT_SHARE[k].label }))} />
-        <Choice<Appetite> label="Appetite" value={s.appetite} onChange={(appetite) => up({ appetite })}
-          options={[{ v: 'light', label: 'Light' }, { v: 'normal', label: 'Normal' }, { v: 'hearty', label: 'Hearty' }]} />
+        <Choice<MeatType> label={cm.type} value={s.type} onChange={(type) => up({ type })}
+          options={(Object.keys(MEAT) as MeatType[]).map((x) => ({ v: x, label: k.meat[x].label }))} />
+        <Choice<MeatShare> label={cm.share} value={s.share} onChange={(share) => up({ share })}
+          options={(Object.keys(MEAT_SHARE) as MeatShare[]).map((x) => ({ v: x, label: k.share[x] }))} />
+        <Choice<Appetite> label={c.appetite} value={s.appetite} onChange={(appetite) => up({ appetite })} options={appetiteOptions(t)} />
         <div className="checks">
-          <Check label="Lots of sides or a buffet" checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
-          <Check label="Extra for seconds or leftovers" checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
+          <Check label={cm.buffet} checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
+          <Check label={c.extra} checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
         </div>
-        <MobileBar label="Raw meat to buy" value={us ? lbText(r.rawG) : gramsText(r.rawG)} people={s.adults + s.kids} />
+        <MobileBar label={cm.mobile} value={us ? f.lb(r.rawG) : f.g(r.rawG)} people={people} />
       </div>
       <div className="calc-result" aria-live="polite">
-        <div className="result-head"><span className="result-kicker">Buy this much (raw weight)</span><UnitToggle value={units} onChange={setUnits} /></div>
-        <p className="result-big"><ResultLid n={s.adults + s.kids} />{us ? lbText(r.rawG) : gramsText(r.rawG)}</p>
-        <p className="result-sub">{us ? gramsText(r.rawG) : lbText(r.rawG)}{r.patties ? ` · ${r.patties} patties of ⅓ lb (150 g)` : ''}</p>
+        <div className="result-head"><span className="result-kicker">{cm.kicker}</span><UnitToggle t={t} value={units} onChange={setUnits} /></div>
+        <p className="result-big"><ResultLid t={t} n={people} />{us ? f.lb(r.rawG) : f.g(r.rawG)}</p>
+        <p className="result-sub">{us ? f.g(r.rawG) : f.lb(r.rawG)}{r.patties ? ` · ${tpl(cm.patties, { n: r.patties })}` : ''}</p>
         <div className="stats">
-          <Stat label="Per person" main={us ? lbText(r.perPersonG) : gramsText(r.perPersonG)} sub="raw" />
-          <Stat label="On the plate" main={t.cookedNote.split(';')[0]} sub="per adult, only main" />
-          <Stat label="Examples" main={<span className="stat-text">{t.examples}</span>} />
+          <Stat label={cm.perPerson} main={us ? f.lb(r.perPersonG) : f.g(r.perPersonG)} sub={cm.raw} />
+          <Stat label={cm.plate} main={m.cookedNote.split(';')[0]} sub={cm.plateSub} />
+          <Stat label={cm.examples} main={<span className="stat-text">{m.examples}</span>} />
         </div>
-        <p className="result-note">Raw weight is what you buy. Meat loses about 25% of its weight when cooked, and slow-cooked cuts like brisket and pork shoulder lose about half.</p>
-        <div className="result-actions"><CopyButton text={summary} /></div>
+        <p className="result-note">{cm.note}</p>
+        <div className="result-actions"><CopyButton t={t} text={summary} /></div>
       </div>
     </div>
   );

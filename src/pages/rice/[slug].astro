@@ -4,89 +4,85 @@ import RiceCalculator from '../../components/RiceCalculator';
 import Faq from '../../components/Faq.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import Lid from '../../components/Lid.astro';
-import { rice, RICE, RICE_DEFAULT, RICE_MEAL, cupsText, cupsNum, gramsText, lbText, litresText, quartsText, round, type RiceType, type RiceMeal } from '../../lib/kitchen';
-import { RICE_COUNTS, RICE_TYPE_PAGES } from '../../lib/presets';
+import { rice, RICE, RICE_DEFAULT, RICE_MEAL, round, type RiceType, type RiceMeal } from '../../lib/kitchen';
+import { RICE_COUNTS, RICE_TYPE_PAGES, riceSlugPaths } from '../../lib/presets';
 import { faqLd, appLd, crumbLd } from '../../lib/seo';
+import { i18n, islandT, tpl } from '../../i18n';
 
-export function getStaticPaths() {
-  return [
-    ...RICE_COUNTS.map((n) => ({ params: { slug: `for-${n}-people` }, props: { kind: 'count' as const, n } })),
-    ...RICE_TYPE_PAGES.map((p) => ({ params: { slug: p.slug }, props: { kind: 'type' as const, type: p.type, name: p.name } })),
-  ];
-}
-const p = Astro.props as { kind: 'count'; n: number } | { kind: 'type'; type: RiceType; name: string };
-const meals = Object.keys(RICE_MEAL) as RiceMeal[];
+export function getStaticPaths() { return riceSlugPaths(); }
+const p = Astro.props as { kind: 'count'; n: number } | { kind: 'type'; type: RiceType };
+const { lang, d, f, h } = i18n(Astro.url.pathname);
 const path = Astro.url.pathname;
+const meals = Object.keys(RICE_MEAL) as RiceMeal[];
 const type: RiceType = p.kind === 'type' ? p.type : 'white';
 const n = p.kind === 'count' ? p.n : 1;
 const s = rice({ ...RICE_DEFAULT, type, adults: n, meal: 'side' }), m = rice({ ...RICE_DEFAULT, type, adults: n, meal: 'main' });
 const t = RICE[type];
+const cap = (x: string) => x[0].toUpperCase() + x.slice(1);
 let title: string, h1: string, description: string, crumb: string, note: string, preset: object, faq: { q: string; a: string }[], table: { label: string; cups: string; weight: string; water: string; cooked: string }[];
 
 if (p.kind === 'count') {
-  title = `How Many Cups of Rice for ${n} People? ${cupsNum(s.dryCups)}–${cupsNum(m.dryCups)} Cups`;
-  h1 = `How many cups of rice for ${n} people?`;
-  crumb = `Rice for ${n} people`;
-  description = `For ${n} people, cook ${cupsText(s.dryCups)} (${gramsText(s.dryG)}) of uncooked rice as a side, or ${cupsText(m.dryCups)} (${gramsText(m.dryG)}) when rice is the main part of the meal. Water, rice-cooker cups and pot size included.`;
-  note = `That makes about ${cupsText(s.cookedCups)} or ${cupsText(m.cookedCups)} of cooked rice. On the stove, use ${cupsText(s.waterCups)} or ${cupsText(m.waterCups)} of water (${litresText(s.waterMl)} or ${litresText(m.waterMl)}). In rice-cooker cups (180 ml): ${round(s.cookerCups, 0.5)} or ${round(m.cookerCups, 0.5)}.`;
+  const c = d.riceN;
+  const v = {
+    n, range: `${f.dec(f.cupsNum(s.dryCups))}–${f.dec(f.cupsNum(m.dryCups))}`,
+    sCups: f.cups(s.dryCups), mCups: f.cups(m.dryCups), dCups: f.cups(rice({ ...RICE_DEFAULT, adults: n, meal: 'ricedish' }).dryCups),
+    sG: f.g(s.dryG), mG: f.g(m.dryG), sLb: f.lb(s.dryG), mLb: f.lb(m.dryG),
+    sCooked: f.cups(s.cookedCups), mCooked: f.cups(m.cookedCups), sWater: f.cups(s.waterCups), mWater: f.cups(m.waterCups),
+    sWaterL: f.l(s.waterMl), mWaterL: f.l(m.waterMl), sCooker: f.n(round(s.cookerCups, 0.5)), mCooker: f.n(round(m.cookerCups, 0.5)),
+    pot: m.potL > 12 ? tpl(c.potBig, { pot: f.n(m.potL), batches: m.cookerBatches.large }) : tpl(c.potOk, { pot: f.n(m.potL), qt: f.qt(m.potL * 1000) }),
+  };
+  title = tpl(c.title, v); h1 = tpl(c.h1, v); crumb = tpl(c.crumb, v); description = tpl(c.description, v); note = tpl(c.note, v);
   preset = { adults: n, meal: 'side' };
-  table = meals.map((k) => { const r = rice({ ...RICE_DEFAULT, adults: n, meal: k }); return { label: RICE_MEAL[k].label, cups: cupsText(r.dryCups), weight: `${gramsText(r.dryG)} · ${lbText(r.dryG)}`, water: `${cupsText(r.waterCups)} · ${litresText(r.waterMl)}`, cooked: `${cupsText(r.cookedCups)} · ${gramsText(r.cookedG)}` }; });
-  faq = [
-    { q: `How many cups of rice for ${n} people?`, a: `${cupsText(s.dryCups)} of uncooked rice as a side dish, ${cupsText(m.dryCups)} when rice is the main part of the meal, and ${cupsText(rice({ ...RICE_DEFAULT, adults: n, meal: 'ricedish' }).dryCups)} for a rice dish such as biryani or fried rice.` },
-    { q: `How many grams or pounds of rice for ${n} people?`, a: `${gramsText(s.dryG)} (${lbText(s.dryG)}) of uncooked rice as a side and ${gramsText(m.dryG)} (${lbText(m.dryG)}) as a main.` },
-    { q: `How much water for rice for ${n} people?`, a: `For long-grain white rice on the stove, ${cupsText(s.waterCups)} (${litresText(s.waterMl)}) for the side-dish amount and ${cupsText(m.waterCups)} (${litresText(m.waterMl)}) for the main amount. A rice cooker needs less: fill to the line for ${round(m.cookerCups, 0.5)} rice-cooker cups.` },
-    { q: `Can I cook rice for ${n} people in one pot?`, a: m.potL > 12 ? `This is a lot of rice. Use a ${m.potL} L stock pot, or cook it in ${m.cookerBatches.large} batches in a large (10-cup) rice cooker. Large batches cook more evenly in the oven: bake covered at 180 °C (350 °F) for about 35 minutes.` : `Yes. Use a pot of at least ${m.potL} L (${quartsText(m.potL * 1000)}) so the rice has space to grow.` },
-  ];
+  table = meals.map((k) => { const r = rice({ ...RICE_DEFAULT, adults: n, meal: k }); return { label: d.k.riceMeal[k].label, cups: f.cups(r.dryCups), weight: `${f.g(r.dryG)} · ${f.lb(r.dryG)}`, water: `${f.cups(r.waterCups)} · ${f.l(r.waterMl)}`, cooked: `${f.cups(r.cookedCups)} · ${f.g(r.cookedG)}` }; });
+  faq = c.faq.map((x) => ({ q: tpl(x.q, v), a: tpl(x.a, v) }));
 } else {
-  const nm = p.name; const Nm = nm[0].toUpperCase() + nm.slice(1);
-  title = `How Much ${Nm.replace(/\b\w/g, (c) => c.toUpperCase())} Per Person? Cups, Grams and Water`;
-  h1 = `How much ${nm} per person?`;
-  crumb = `${Nm} per person`;
-  description = `${Nm} per person: ${gramsText(s.dryG)} (${cupsText(s.dryCups)}) uncooked as a side, ${gramsText(m.dryG)} (${cupsText(m.dryCups)}) as a main. Water ratio, cooked yield and a calculator for any number of guests.`;
-  note = `On the stove, use ${t.water.stovetop} cups of water for each cup of ${nm}. 1 cup uncooked makes about ${cupsText(t.yieldVol)} cooked. ${t.tip}`;
+  const c = d.riceType, name = c.names[type];
+  const v = {
+    name, Name: cap(name), Title: name.replace(/(^|\s)\S/g, (x) => x.toUpperCase()),
+    sG: f.g(s.dryG), sCups: f.cups(s.dryCups), mG: f.g(m.dryG), mCups: f.cups(m.dryCups),
+    water: f.n(t.water.stovetop), stove: f.n(t.water.stovetop), cooker: f.n(t.water.cooker), ip: f.n(t.water.instantpot), yield: f.cups(t.yieldVol), tip: d.k.rice[type].tip,
+  };
+  title = tpl(c.title, v); h1 = tpl(c.h1, v); crumb = tpl(c.crumb, v); description = tpl(c.description, v); note = tpl(c.note, v);
   preset = { type };
-  table = [2, 4, 6, 10, 20, 50].map((k) => { const r = rice({ ...RICE_DEFAULT, type, adults: k, meal: 'main' }); return { label: `${k} people`, cups: cupsText(r.dryCups), weight: `${gramsText(r.dryG)} · ${lbText(r.dryG)}`, water: `${cupsText(r.waterCups)} · ${litresText(r.waterMl)}`, cooked: cupsText(r.cookedCups) }; });
-  faq = [
-    { q: `How much water for 1 cup of ${nm}?`, a: `${t.water.stovetop} cups on the stove, ${t.water.cooker} cups in a rice cooker and ${t.water.instantpot} cup in an Instant Pot.` },
-    { q: `How much cooked ${nm} does 1 cup make?`, a: `About ${cupsText(t.yieldVol)} of cooked rice.` },
-    { q: `Any tips for ${nm}?`, a: t.tip },
-  ];
+  table = [2, 4, 6, 10, 20, 50].map((k) => { const r = rice({ ...RICE_DEFAULT, type, adults: k, meal: 'main' }); return { label: tpl(c.rowPeople, { n: k }), cups: f.cups(r.dryCups), weight: `${f.g(r.dryG)} · ${f.lb(r.dryG)}`, water: `${f.cups(r.waterCups)} · ${f.l(r.waterMl)}`, cooked: f.cups(r.cookedCups) }; });
+  faq = c.faq.map((x) => ({ q: tpl(x.q, v), a: tpl(x.a, v) }));
 }
-const tableHead = p.kind === 'count' ? 'How rice is served' : 'Main dish for';
+const c = d.riceN;
+const uncooked = (g: number) => tpl(c.uncooked, { g: f.g(g), lb: f.lb(g) });
 ---
-<Base title={title} description={description} jsonld={[appLd('Rice calculator', path, description), faqLd(faq), crumbLd([['Home', '/'], ['Rice calculator', '/rice-calculator/'], [crumb, path]])]}>
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/rice-calculator/">Rice calculator</a> › {crumb}</nav>
+<Base title={title} description={description} jsonld={[appLd(d.rice.appName, path, description), faqLd(faq), crumbLd([[d.site.home, h('/')], [d.rice.appName, h('/rice-calculator/')], [crumb, path]])]}>
+  <nav class="crumbs" aria-label={d.site.crumbAria}><a href={h('/')}>{d.site.home}</a> › <a href={h('/rice-calculator/')}>{d.rice.appName}</a> › {crumb}</nav>
   <section class="hero">
     <h1>{h1}</h1>
     <div class="answer">
-      <Lid n={n} size="lg" label={p.kind === 'count' ? `${n} people` : 'per person'} />
+      <Lid n={n} size="lg" label={p.kind === 'count' ? tpl(d.site.footPeople, { n }) : d.riceType.perPerson} />
       <div class="answer-figs">
-        <div class="fig"><span class="fig-label">As a side dish</span><span class="fig-main">{cupsText(s.dryCups)}</span><span class="fig-sub">{gramsText(s.dryG)} · {lbText(s.dryG)} uncooked</span></div>
-        <div class="fig"><span class="fig-label">As the main part of the meal</span><span class="fig-main">{cupsText(m.dryCups)}</span><span class="fig-sub">{gramsText(m.dryG)} · {lbText(m.dryG)} uncooked</span></div>
+        <div class="fig"><span class="fig-label">{c.side}</span><span class="fig-main">{f.cups(s.dryCups)}</span><span class="fig-sub">{uncooked(s.dryG)}</span></div>
+        <div class="fig"><span class="fig-label">{c.main}</span><span class="fig-main">{f.cups(m.dryCups)}</span><span class="fig-sub">{uncooked(m.dryG)}</span></div>
       </div>
     </div>
     <p class="answer-note">{note}</p>
   </section>
   <section>
     <div class="table-wrap"><table class="table">
-      <thead><tr><th>{tableHead}</th><th class="n">Uncooked (cups)</th><th class="n">Uncooked (weight)</th><th class="n hide-sm">Water (stove)</th><th class="n hide-sm">Cooked</th></tr></thead>
+      <thead><tr><th>{p.kind === 'count' ? c.thServed : d.riceType.thFor}</th><th class="n">{c.thCups}</th><th class="n">{c.thWeight}</th><th class="n hide-sm">{c.thWater}</th><th class="n hide-sm">{c.thCooked}</th></tr></thead>
       <tbody>{table.map((r) => <tr><td>{r.label}</td><td class="n">{r.cups}</td><td class="n">{r.weight}</td><td class="n hide-sm">{r.water}</td><td class="n hide-sm">{r.cooked}</td></tr>)}</tbody>
     </table></div>
-    <p class="table-note">{p.kind === 'count' ? 'Long-grain white rice, adults, normal appetite.' : 'Adults, normal appetite.'} US cups (237 ml). <a href="/how-we-calculate/">How we calculate</a></p>
+    <p class="table-note">{p.kind === 'count' ? c.tableNote : d.riceType.tableNote} {c.usCup} <a href={h('/how-we-calculate/')}>{d.site.how}</a></p>
   </section>
   <section class="section">
-    <h2>Change the numbers</h2>
-    <p class="lede">Add children, change the rice or the pot, or plan for a buffet.</p>
-    <RiceCalculator client:visible preset={preset} />
+    <h2>{d.site.changeNumbers}</h2>
+    <p class="lede">{c.changeLede}</p>
+    <RiceCalculator client:visible preset={preset} t={islandT(lang)} />
   </section>
   <AdSlot />
   <Faq items={faq} />
   <section class="section">
-    <h2>Rice for more people</h2>
-    <ul class="lids">{RICE_COUNTS.map((c) => <li><a href={`/rice/for-${c}-people/`} aria-current={p.kind === 'count' && c === n ? 'page' : undefined}><Lid n={c} /><span>people</span></a></li>)}</ul>
+    <h2>{c.more}</h2>
+    <ul class="lids">{RICE_COUNTS.map((k) => <li><a href={h(`/rice/for-${k}-people/`)} aria-current={p.kind === 'count' && k === n ? 'page' : undefined}><Lid n={k} /><span>{d.site.people}</span></a></li>)}</ul>
   </section>
   <section class="section">
-    <h2>By type of rice</h2>
-    <ul class="links">{RICE_TYPE_PAGES.map((r) => <li><a href={`/rice/${r.slug}/`}>{r.name[0].toUpperCase() + r.name.slice(1)}</a></li>)}<li><a href="/rice-to-water-ratio/">Rice to water ratio</a></li><li><a href="/rice/kg-of-rice-for-people/">Kg of rice for a crowd</a></li><li><a href="/rice/how-many-people-does-rice-feed/">How many people a cup feeds</a></li></ul>
+    <h2>{c.byType}</h2>
+    <ul class="links">{RICE_TYPE_PAGES.map((r) => <li><a href={h(`/rice/${r.slug}/`)}>{cap(d.riceType.names[r.type])}</a></li>)}<li><a href={h('/rice-to-water-ratio/')}>{d.rice.linkWater}</a></li><li><a href={h('/rice/kg-of-rice-for-people/')}>{d.rice.linkKg}</a></li><li><a href={h('/rice/how-many-people-does-rice-feed/')}>{d.rice.linkFeeds}</a></li></ul>
   </section>
 </Base>

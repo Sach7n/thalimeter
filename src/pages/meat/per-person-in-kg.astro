@@ -1,12 +1,15 @@
 ---
 import Guide from '../../components/Guide.astro';
-import { MEAT, gramsText, lbText } from '../../lib/kitchen';
+import { MEAT } from '../../lib/kitchen';
 import { MEAT_ROWS } from '../../lib/questions';
+import { i18n, tpl } from '../../i18n';
+const { d, f } = i18n(Astro.url.pathname);
+const t = d.guide.meatKg;
 ---
-<Guide slug="/meat/per-person-in-kg/" tool={{ href: '/meat-per-person-calculator/', name: 'meat per person calculator' }}>
+<Guide slug="/meat/per-person-in-kg/">
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>Meat (raw weight)</th><th class="n">Per adult</th><th class="n">10 people</th><th class="n">25 people</th><th class="n">50 people</th></tr></thead>
-    <tbody>{MEAT_ROWS.map((t) => { const g = MEAT[t].rawG; return <tr><td>{MEAT[t].label}</td><td class="n">{gramsText(g)} · {lbText(g)}</td><td class="n">{gramsText(10 * g)} · {lbText(10 * g)}</td><td class="n">{gramsText(25 * g)}</td><td class="n">{gramsText(50 * g)}</td></tr>; })}</tbody>
+    <thead><tr><th>{t.thMeat}</th><th class="n">{t.thPer}</th>{[10, 25, 50].map((n) => <th class="n">{tpl(t.thN, { n })}</th>)}</tr></thead>
+    <tbody>{MEAT_ROWS.map((x) => { const g = MEAT[x].rawG; return <tr><td>{d.k.meat[x].label}</td><td class="n">{f.g(g)} · {f.lb(g)}</td><td class="n">{f.g(10 * g)} · {f.lb(10 * g)}</td><td class="n">{f.g(25 * g)}</td><td class="n">{f.g(50 * g)}</td></tr>; })}</tbody>
   </table></div>
-  <p class="table-note">Meat is the only main, adults, normal appetite. With two mains use about 60%, with three about 45%.</p>
+  <p class="table-note">{t.note}</p>
 </Guide>

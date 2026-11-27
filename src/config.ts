@@ -9,13 +9,14 @@ export const site = {
   adsenseSlot: import.meta.env.PUBLIC_ADSENSE_SLOT ?? '',
 };
 export type Tool = 'rice' | 'water' | 'pasta' | 'meat';
-export const TOOLS: { href: string; tool: Tool; tag: string; name: string; blurb: string }[] = [
-  { href: '/rice-calculator/', tool: 'rice', tag: 'Rice', name: 'Rice calculator', blurb: 'How much rice per person, for any number of guests, in cups and grams.' },
-  { href: '/rice-to-water-ratio/', tool: 'water', tag: 'Water', name: 'Rice to water ratio', blurb: 'Exact water for white, basmati, jasmine, brown and sushi rice.' },
-  { href: '/uncooked-to-cooked-rice/', tool: 'rice', tag: 'Convert', name: 'Uncooked to cooked rice', blurb: 'Dry rice to cooked rice, and back, in cups or grams.' },
-  { href: '/pasta-calculator/', tool: 'pasta', tag: 'Pasta', name: 'Pasta calculator', blurb: 'How much pasta per person, plus water, salt and sauce.' },
-  { href: '/meat-per-person-calculator/', tool: 'meat', tag: 'Meat', name: 'Meat per person', blurb: 'How much meat to buy for BBQs, tacos, turkey and parties.' },
+/** key indexes the dictionary's `tools` entry for the tag, name and blurb. */
+export const TOOLS: { href: string; tool: Tool; key: 'rice' | 'water' | 'convert' | 'pasta' | 'meat' }[] = [
+  { href: '/rice-calculator/', tool: 'rice', key: 'rice' },
+  { href: '/rice-to-water-ratio/', tool: 'water', key: 'water' },
+  { href: '/uncooked-to-cooked-rice/', tool: 'rice', key: 'convert' },
+  { href: '/pasta-calculator/', tool: 'pasta', key: 'pasta' },
+  { href: '/meat-per-person-calculator/', tool: 'meat', key: 'meat' },
 ];
 /** Which painted code colour a path wears. */
-export const toolFor = (path: string): Tool =>
+export const toolFor = (path: string): Tool => // path without its /xx/ language prefix
   path.startsWith('/rice-to-water') ? 'water' : path.startsWith('/pasta') ? 'pasta' : path.startsWith('/meat') ? 'meat' : 'rice';

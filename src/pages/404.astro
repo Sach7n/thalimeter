@@ -1,8 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import ToolRows from '../components/ToolRows.astro';
+import { i18n } from '../i18n';
+const { d } = i18n(Astro.url.pathname);
+const p = d.notFound;
 ---
-<Base title="Page not found" description="This page does not exist." noindex>
-  <section class="hero"><h1>This pot is empty.</h1><p>We cannot find that page. Try one of our calculators:</p></section>
+<Base title={p.title} description={p.description} noindex>
+  <section class="hero"><h1>{p.h1}</h1><p>{p.lede}</p></section>
   <ToolRows />
 </Base>

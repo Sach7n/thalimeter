@@ -1,0 +1,8 @@
+---
+// The same page in another language: the page reads its language from the URL.
+import Page from '../../pasta/[slug].astro';
+import { otherLangs } from '../../../i18n';
+import { pastaSlugPaths } from '../../../lib/presets';
+export const getStaticPaths = () => otherLangs().flatMap((l) => pastaSlugPaths().map((p) => ({ params: { ...l.params, ...p.params }, props: { ...l.props, ...p.props } })));
+---
+<Page {...Astro.props} />

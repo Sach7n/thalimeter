@@ -3,44 +3,47 @@ import Base from '../../layouts/Base.astro';
 import MeatCalculator from '../../components/MeatCalculator';
 import AdSlot from '../../components/AdSlot.astro';
 import Lid from '../../components/Lid.astro';
-import { meat, MEAT, MEAT_DEFAULT, gramsText, lbText } from '../../lib/kitchen';
-import { MEAT_PAGES } from '../../lib/meat-pages';
+import { meat, MEAT, MEAT_DEFAULT } from '../../lib/kitchen';
+import { MEAT_PAGES, meatSlugPaths } from '../../lib/meat-pages';
 import { appLd, crumbLd } from '../../lib/seo';
-export function getStaticPaths() { return MEAT_PAGES.map((p) => ({ params: { slug: p.slug }, props: { p } })); }
+import { i18n, islandT, tpl } from '../../i18n';
+export function getStaticPaths() { return meatSlugPaths(); }
 const { p } = Astro.props as { p: (typeof MEAT_PAGES)[number] };
+const { lang, d, f, h } = i18n(Astro.url.pathname);
+const c = d.meatOcc, t = c.pages[p.slug];
 const rows = [4, 6, 8, 10, 15, 20, 30, 50, 100].map((n) => ({ n, r: meat({ ...MEAT_DEFAULT, type: p.type, adults: n }) }));
 const path = Astro.url.pathname;
 const ten = meat({ ...MEAT_DEFAULT, type: p.type, adults: 10 });
 ---
-<Base title={p.title} description={`${p.intro} Chart for 4 to 100 guests and a calculator.`} jsonld={[appLd('Meat per person calculator', path, p.intro), crumbLd([['Home', '/'], ['Meat per person', '/meat-per-person-calculator/'], [p.h1, path]])]}>
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> › <a href="/meat-per-person-calculator/">Meat per person</a> › {p.h1}</nav>
+<Base title={t.title} description={`${t.intro} ${c.descSuffix}`} jsonld={[appLd(d.meat.appName, path, t.intro), crumbLd([[d.site.home, h('/')], [c.crumb, h('/meat-per-person-calculator/')], [t.h1, path]])]}>
+  <nav class="crumbs" aria-label={d.site.crumbAria}><a href={h('/')}>{d.site.home}</a> › <a href={h('/meat-per-person-calculator/')}>{c.crumb}</a> › {t.h1}</nav>
   <section class="hero">
-    <h1>{p.h1}?</h1>
+    <h1>{t.h1}{d.site.qmark}</h1>
     <div class="answer">
-      <Lid n={1} size="lg" label="per adult" />
+      <Lid n={1} size="lg" label={c.perAdult} />
       <div class="answer-figs">
-        <div class="fig"><span class="fig-label">Raw weight per adult</span><span class="fig-main">{lbText(MEAT[p.type].rawG)}</span><span class="fig-sub">{MEAT[p.type].rawG} g · the only main</span></div>
-        <div class="fig"><span class="fig-label">For 10 adults</span><span class="fig-main">{lbText(ten.rawG)}</span><span class="fig-sub">{gramsText(ten.rawG)} raw</span></div>
+        <div class="fig"><span class="fig-label">{c.rawPer}</span><span class="fig-main">{f.lb(MEAT[p.type].rawG)}</span><span class="fig-sub">{tpl(c.rawPerSub, { g: MEAT[p.type].rawG })}</span></div>
+        <div class="fig"><span class="fig-label">{c.ten}</span><span class="fig-main">{f.lb(ten.rawG)}</span><span class="fig-sub">{tpl(c.tenSub, { g: f.g(ten.rawG) })}</span></div>
       </div>
     </div>
-    <p class="answer-note">{p.intro}</p>
+    <p class="answer-note">{t.intro}</p>
   </section>
   <section>
     <div class="table-wrap"><table class="table">
-      <thead><tr><th>Guests (adults)</th><th class="n">Raw weight to buy</th>{p.type === 'burgers' && <th class="n">Patties</th>}</tr></thead>
-      <tbody>{rows.map(({ n, r }) => <tr><td>{n}</td><td class="n">{lbText(r.rawG)} · {gramsText(r.rawG)}</td>{p.type === 'burgers' && <td class="n">{r.patties}</td>}</tr>)}</tbody>
+      <thead><tr><th>{c.thGuests}</th><th class="n">{c.thRaw}</th>{p.type === 'burgers' && <th class="n">{c.thPatties}</th>}</tr></thead>
+      <tbody>{rows.map(({ n, r }) => <tr><td>{n}</td><td class="n">{f.lb(r.rawG)} · {f.g(r.rawG)}</td>{p.type === 'burgers' && <td class="n">{r.patties}</td>}</tr>)}</tbody>
     </table></div>
-    <p class="table-note">{MEAT[p.type].label}, the only main, normal appetite.</p>
+    <p class="table-note">{tpl(c.tableNote, { label: d.k.meat[p.type].label })}</p>
   </section>
   <section class="section">
-    <h2>Change the numbers</h2>
-    <p class="lede">Add children, add other mains, or plan for leftovers.</p>
-    <MeatCalculator client:visible preset={{ type: p.type }} />
+    <h2>{d.site.changeNumbers}</h2>
+    <p class="lede">{c.changeLede}</p>
+    <MeatCalculator client:visible preset={{ type: p.type }} t={islandT(lang)} />
   </section>
   <AdSlot />
-  <section class="section prose"><h2>Tips</h2><ul>{p.tips.map((t) => <li>{t}</li>)}</ul></section>
+  <section class="section prose"><h2>{c.tips}</h2><ul>{t.tips.map((x) => <li>{x}</li>)}</ul></section>
   <section class="section">
-    <h2>Other occasions</h2>
-    <ul class="links">{MEAT_PAGES.filter((x) => x.slug !== p.slug).map((x) => <li><a href={`/meat/${x.slug}/`}>{x.h1}</a></li>)}</ul>
+    <h2>{c.other}</h2>
+    <ul class="links">{MEAT_PAGES.filter((x) => x.slug !== p.slug).map((x) => <li><a href={h(`/meat/${x.slug}/`)}>{c.pages[x.slug].h1}</a></li>)}</ul>
   </section>
 </Base>

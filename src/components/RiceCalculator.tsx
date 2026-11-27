@@ -1,56 +1,64 @@
 import { useState } from 'react';
-import { RICE, RICE_DEFAULT, RICE_MEAL, RICE_METHOD_LABEL, rice, cupsText, gramsText, litresText, quartsText, round, type RiceInput, type RiceType, type RiceMeal, type RiceMethod, type Appetite } from '../lib/kitchen';
-import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid } from './ui';
+import { RICE, RICE_DEFAULT, RICE_MEAL, RICE_METHOD_LABEL, rice, round, type RiceInput, type RiceType, type RiceMeal, type RiceMethod, type Appetite } from '../lib/kitchen';
+import { tpl } from '../i18n/fmt';
+import { Stepper, Choice, Check, Stat, useUnits, UnitToggle, CopyButton, MobileBar, ResultLid, appetiteOptions, fmtOf, type T } from './ui';
 
-export default function RiceCalculator({ preset = {} }: { preset?: Partial<RiceInput> }) {
+export default function RiceCalculator({ preset = {}, t }: { preset?: Partial<RiceInput>; t: T }) {
   const [s, setS] = useState<RiceInput>({ ...RICE_DEFAULT, ...preset });
   const [units, setUnits] = useUnits();
   const up = (p: Partial<RiceInput>) => setS((x) => ({ ...x, ...p }));
+  const f = fmtOf(t), c = t.calc, cr = c.rice, k = t.k;
   const r = rice(s);
-  const t = RICE[s.type];
+  const ty = RICE[s.type];
   const us = units === 'us';
-  const dryMain = us ? cupsText(r.dryCups) : gramsText(r.dryG);
-  const drySub = us ? `${gramsText(r.dryG)} · ${round(r.cookerCups, 0.5)} rice-cooker cups` : `${cupsText(r.dryCups)} (US) · ${round(r.cookerCups, 0.5)} rice-cooker cups`;
-  const water = us ? cupsText(r.waterCups) : litresText(r.waterMl);
-  const summary = `Rice for ${s.adults} adults${s.kids ? ` and ${s.kids} children` : ''} (${RICE_MEAL[s.meal].label.toLowerCase()}, ${t.label.toLowerCase()}): ${cupsText(r.dryCups)} / ${gramsText(r.dryG)} uncooked, ${cupsText(r.waterCups)} / ${litresText(r.waterMl)} water, makes about ${cupsText(r.cookedCups)} (${gramsText(r.cookedG)}) cooked. — thalimeter.com`;
+  const people = s.adults + s.kids;
+  const cooker = f.n(round(r.cookerCups, 0.5));
+  const dryMain = us ? f.cups(r.dryCups) : f.g(r.dryG);
+  const drySub = us ? tpl(cr.subUs, { g: f.g(r.dryG), cooker }) : tpl(cr.subMetric, { cups: f.cups(r.dryCups), cooker });
+  const water = us ? f.cups(r.waterCups) : f.l(r.waterMl);
+  const summary = tpl(cr.summary, {
+    adults: s.adults, kids: s.kids ? tpl(cr.kids, { n: s.kids }) : '',
+    meal: k.riceMeal[s.meal].label.toLowerCase(), type: k.rice[s.type].label.toLowerCase(),
+    cups: f.cups(r.dryCups), g: f.g(r.dryG), wcups: f.cups(r.waterCups), wl: f.l(r.waterMl), ccups: f.cups(r.cookedCups), cg: f.g(r.cookedG),
+  }) + ' — thalimeter.com';
 
   return (
     <div className="calc">
       <div className="calc-inputs">
         <div className="row-2">
-          <Stepper label="Adults" value={s.adults} onChange={(adults) => up({ adults })} />
-          <Stepper label="Children" hint="(under 12)" value={s.kids} onChange={(kids) => up({ kids })} />
+          <Stepper t={t} label={c.adults} value={s.adults} onChange={(adults) => up({ adults })} />
+          <Stepper t={t} label={c.children} hint={c.under12} value={s.kids} onChange={(kids) => up({ kids })} />
         </div>
-        <Choice<RiceMeal> label="How is rice served?" value={s.meal} onChange={(meal) => up({ meal })}
-          options={(Object.keys(RICE_MEAL) as RiceMeal[]).map((k) => ({ v: k, label: RICE_MEAL[k].label, hint: RICE_MEAL[k].hint }))} wide />
-        <Choice<RiceType> label="Type of rice" value={s.type} onChange={(type) => up({ type })}
-          options={(Object.keys(RICE) as RiceType[]).map((k) => ({ v: k, label: RICE[k].label }))} />
-        <Choice<RiceMethod> label="How will you cook it?" value={s.method} onChange={(method) => up({ method })}
-          options={(Object.keys(RICE_METHOD_LABEL) as RiceMethod[]).map((k) => ({ v: k, label: RICE_METHOD_LABEL[k] }))} />
-        <Choice<Appetite> label="Appetite" value={s.appetite} onChange={(appetite) => up({ appetite })}
-          options={[{ v: 'light', label: 'Light' }, { v: 'normal', label: 'Normal' }, { v: 'hearty', label: 'Hearty' }]} />
+        <Choice<RiceMeal> label={cr.served} value={s.meal} onChange={(meal) => up({ meal })}
+          options={(Object.keys(RICE_MEAL) as RiceMeal[]).map((m) => ({ v: m, label: k.riceMeal[m].label, hint: k.riceMeal[m].hint }))} wide />
+        <Choice<RiceType> label={cr.type} value={s.type} onChange={(type) => up({ type })}
+          options={(Object.keys(RICE) as RiceType[]).map((m) => ({ v: m, label: k.rice[m].label }))} />
+        <Choice<RiceMethod> label={cr.method} value={s.method} onChange={(method) => up({ method })}
+          options={(Object.keys(RICE_METHOD_LABEL) as RiceMethod[]).map((m) => ({ v: m, label: k.method[m] }))} />
+        <Choice<Appetite> label={c.appetite} value={s.appetite} onChange={(appetite) => up({ appetite })} options={appetiteOptions(t)} />
         <div className="checks">
-          <Check label="Buffet with lots of other dishes" checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
-          <Check label="Extra for seconds or leftovers" checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
+          <Check label={c.buffet} checked={s.buffet} onChange={(buffet) => up({ buffet })} hint="−25%" />
+          <Check label={c.extra} checked={s.extra} onChange={(extra) => up({ extra })} hint="+20%" />
         </div>
-        <MobileBar label="Uncooked rice" value={dryMain} people={s.adults + s.kids} />
+        <MobileBar label={cr.mobile} value={dryMain} people={people} />
       </div>
 
       <div className="calc-result" aria-live="polite">
         <div className="result-head">
-          <span className="result-kicker">Cook this much uncooked rice</span>
-          <UnitToggle value={units} onChange={setUnits} />
+          <span className="result-kicker">{cr.kicker}</span>
+          <UnitToggle t={t} value={units} onChange={setUnits} />
         </div>
-        <p className="result-big"><ResultLid n={s.adults + s.kids} />{dryMain}</p>
+        <p className="result-big"><ResultLid t={t} n={people} />{dryMain}</p>
         <p className="result-sub">{drySub}</p>
         <div className="stats">
-          <Stat label="Water" main={water} sub={s.method === 'cooker' ? 'or fill to your cooker’s line' : `${t.water[s.method]} : 1 water to rice`} />
-          <Stat label="Cooked rice" main={us ? cupsText(r.cookedCups) : gramsText(r.cookedG)} sub={us ? gramsText(r.cookedG) : cupsText(r.cookedCups)} />
-          <Stat label="Pot size" main={us ? quartsText(r.potL * 1000) : `${r.potL} L`} sub={us ? `${r.potL} L or bigger` : `${quartsText(r.potL * 1000)} or bigger`} />
-          <Stat label="Cook time" main={r.minutes ? `${r.minutes} min` : 'Cooker setting'} sub={s.method === 'instantpot' ? 'high pressure + 10 min natural release' : s.method === 'stovetop' ? 'covered, low heat, then rest 10 min' : `${r.cookerBatches.small} batch${r.cookerBatches.small > 1 ? 'es' : ''} in a 5.5-cup cooker`} />
+          <Stat label={cr.water} main={water} sub={s.method === 'cooker' ? cr.cookerLine : tpl(cr.ratio, { r: f.n(ty.water[s.method]) })} />
+          <Stat label={cr.cooked} main={us ? f.cups(r.cookedCups) : f.g(r.cookedG)} sub={us ? f.g(r.cookedG) : f.cups(r.cookedCups)} />
+          <Stat label={cr.pot} main={us ? f.qt(r.potL * 1000) : `${f.n(r.potL)} L`} sub={tpl(cr.potBigger, { v: us ? `${f.n(r.potL)} L` : f.qt(r.potL * 1000) })} />
+          <Stat label={cr.time} main={r.minutes ? `${r.minutes} ${t.units.min}` : cr.cookerSetting}
+            sub={s.method === 'instantpot' ? cr.ipNote : s.method === 'stovetop' ? cr.stoveNote : tpl(r.cookerBatches.small > 1 ? cr.batches : cr.batch, { n: r.cookerBatches.small })} />
         </div>
-        <p className="result-note">Per person: <b>{gramsText(r.perPersonDryG)}</b> uncooked. {t.tip}</p>
-        <div className="result-actions"><CopyButton text={summary} /></div>
+        <p className="result-note" dangerouslySetInnerHTML={{ __html: tpl(cr.note, { g: f.g(r.perPersonDryG), tip: k.rice[s.type].tip }) }} />
+        <div className="result-actions"><CopyButton t={t} text={summary} /></div>
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../config';
+import { i18n, tpl } from '../i18n';
+const { d, h } = i18n(Astro.url.pathname);
+const p = d.about;
 ---
-<Base title="About" description="ThaliMeter makes free, simple kitchen calculators so that you cook the right amount of food.">
-  <section class="hero"><h1>About ThaliMeter</h1></section>
+<Base title={p.title} description={p.description}>
+  <section class="hero"><h1>{p.h1}</h1></section>
   <div class="prose">
-    <p>ThaliMeter makes small, free kitchen calculators. Each one answers one question well: how much rice, pasta or meat to cook for the people at your table.</p>
-    <p>We started it after one too many family dinners with a pot of rice that was half the size it needed to be, and then a party with enough leftovers for a week.</p>
-    <p>The tools work on your device. You do not need an account, and we do not save what you type. See <a href="/how-we-calculate/">how we calculate</a> for every number we use.</p>
-    <p>ThaliMeter is operated by {site.operator}. Contact: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
+    {p.paras.map((x) => <p set:html={tpl(x, { how: h('/how-we-calculate/'), operator: site.operator, email: site.contactEmail })} />)}
   </div>
 </Base>
