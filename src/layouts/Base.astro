@@ -37,7 +37,7 @@ const people = (n: number) => tpl(d.site.footPeople, { n });
   <meta name="theme-color" content="#16191b" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content={site.name} />
-  <meta property="og:locale" content={m.code.replace('-', '_')} />
+  <meta property="og:locale" content={m.og} />
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
@@ -54,7 +54,7 @@ const people = (n: number) => tpl(d.site.footPeople, { n });
     <div class="wrap">
       <a class="logo" href={h('/')} aria-label={d.site.homeAria}>
         <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#dfe3e2" stroke="#16191b" stroke-width="5"/><circle cx="32" cy="32" r="20.5" fill="#fff"/><path d="M20.5 37A12.5 12.5 0 1 1 43.5 37" fill="none" stroke="#d7261e" stroke-width="6.5" stroke-linecap="round"/><path d="M32 33.5 39.5 24.5" stroke="#16191b" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="33.5" r="3.6" fill="#16191b"/><circle cx="25.5" cy="45" r="2.6" fill="#2443b8"/><circle cx="32" cy="46.5" r="2.6" fill="#f2b705"/><circle cx="38.5" cy="45" r="2.6" fill="#1f8a4c"/></svg>
-        <span>ThaliMeter</span>
+        <span lang="en">ThaliMeter</span>
       </a>
       <div class="head-right">
         <nav class="nav" aria-label={d.site.navAria}>

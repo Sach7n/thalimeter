@@ -251,3 +251,6 @@ p.answer { display: block; }
 [dir="rtl"] h1, [dir="rtl"] h2 { letter-spacing: 0; }
 :lang(ar) h1, :lang(ar) h2, :lang(zh-Hans) h1, :lang(zh-Hans) h2, :lang(el) h1, :lang(el) h2 { text-transform: none; }
 :lang(ar) h1, :lang(ar) h2, :lang(zh-Hans) h1, :lang(zh-Hans) h2, :lang(el) h1, :lang(el) h2 { font-family: var(--sans); font-weight: 800; line-height: 1.25; }
+/* Accented capitals (Á, É, Ç, İ) and ¿ need more room than English headings. */
+html:not([lang="en"]) h1, html:not([lang="en"]) h2 { line-height: 1.06; }
+html:lang(ar) h1, html:lang(ar) h2, html:lang(zh-Hans) h1, html:lang(zh-Hans) h2, html:lang(el) h1, html:lang(el) h2 { line-height: 1.25; }

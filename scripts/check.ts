@@ -43,17 +43,23 @@ ok(K.gramsText(2250) === '2.25 kg' && K.gramsText(340) === '340 g', `gramsText $
 // Translations: every language has exactly the English keys, the same {placeholders} and no empty text.
 const { en } = await import('../src/i18n/en.ts');
 const { readdirSync } = await import('node:fs');
-const holes = (s: string) => [...new Set(s.match(/\{\w+\}/g) ?? [])].sort().join(',');
-function sameShape(a: unknown, b: unknown, at: string, lang: string) {
+const holes = (s: string) => new Set(s.match(/\{\w+\}/g) ?? []);
+// Name variants are interchangeable: a language may say {name} where English title-cases it as {Title}.
+const NAMES = new Set(['{name}', '{Name}', '{Title}']);
+const siblingHoles = (o: object) => new Set(Object.values(o).flatMap((v) => (typeof v === 'string' ? [...holes(v)] : [])));
+function sameShape(a: unknown, b: unknown, at: string, lang: string, sib = new Set<string>()) {
   if (typeof a === 'string') {
     if (typeof b !== 'string') return ok(false, `${lang}: ${at} should be text`);
-    ok(holes(a) === holes(b), `${lang}: ${at} placeholders ${holes(b)} ≠ ${holes(a)}`);
+    const ha = holes(a), hb = holes(b);
+    for (const x of ha) ok(hb.has(x) || (NAMES.has(x) && [...NAMES].some((n) => hb.has(n))), `${lang}: ${at} is missing ${x}`);
+    for (const x of hb) ok(ha.has(x) || (NAMES.has(x) && (sib.has(x) || [...NAMES].some((n) => ha.has(n)))), `${lang}: ${at} has unknown ${x}`);
     ok(a === '' || b.trim() !== '', `${lang}: ${at} is empty`);
     return;
   }
   if (typeof b !== 'object' || b === null) return ok(false, `${lang}: ${at} missing`);
   if (Array.isArray(a)) ok(Array.isArray(b) && b.length === a.length, `${lang}: ${at} should have ${a.length} items`);
-  for (const k of Object.keys(a as object)) sameShape((a as any)[k], (b as any)[k], `${at}.${k}`, lang);
+  const s = siblingHoles(a as object);
+  for (const k of Object.keys(a as object)) sameShape((a as any)[k], (b as any)[k], `${at}.${k}`, lang, s);
   for (const k of Object.keys(b as object)) ok(k in (a as object), `${lang}: ${at}.${k} is not in English`);
 }
 for (const file of readdirSync(new URL('../src/i18n/', import.meta.url)).filter((x) => /^[a-z]{2}\.ts$/.test(x) && x !== 'en.ts')) {

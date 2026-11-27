@@ -4,8 +4,8 @@ import type { Dict } from '../i18n/en'; // type only: dictionaries never ship to
 import { makeFmt, tpl } from '../i18n/fmt';
 
 /** Strings an island receives from its page (islandT in i18n/index). */
-export type T = { calc: Dict['calc']; units: Dict['units']; k: Dict['k']; comma: boolean };
-export const fmtOf = (t: T) => makeFmt(t.units, t.comma);
+export type T = { calc: Dict['calc']; units: Dict['units']; k: Dict['k']; comma: boolean; rtl: boolean };
+export const fmtOf = (t: T) => makeFmt(t.units, t.comma, t.rtl);
 
 export function Stepper({ label, value, onChange, min = 0, max = 500, hint, t }: { label: string; value: number; onChange: (v: number) => void; min?: number; max?: number; hint?: string; t: T }) {
   const set = (v: number) => onChange(Math.max(min, Math.min(max, Math.round(v) || 0)));
